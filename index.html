@@ -1,12 +1,14 @@
 <!doctype html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 
 <head>
 
 <meta charset="utf-8">
 
 <meta name="viewport"
-content="width=device-width,initial-scale=1">
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+
+<meta name="theme-color" content="#087443">
 
 <title>فاتورة إيجار | شركة غسان القابضة</title>
 
@@ -14,18 +16,23 @@ content="width=device-width,initial-scale=1">
 
 *{
 box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
 }
 
-html,body{
+html,
+body{
 margin:0;
 padding:0;
+width:100%;
+min-height:100%;
 background:#eef5f1;
 color:#17202a;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
+overflow-x:hidden;
 }
 
 body{
-min-height:100vh;
+touch-action:manipulation;
 }
 
 .wrap{
@@ -85,15 +92,24 @@ color:#dc2626;
 }
 
 input,
+select,
+button{
+font-size:16px;
+}
+
+input,
 select{
 width:100%;
 height:40px;
 border:1px solid #d5dce0;
 border-radius:8px;
 padding:0 10px;
-font-size:13px;
 outline:none;
 background:#fff;
+color:#17202a;
+-webkit-appearance:none;
+appearance:none;
+touch-action:manipulation;
 }
 
 input:focus,
@@ -132,13 +148,14 @@ margin-top:15px;
 }
 
 button{
+width:100%;
 height:42px;
 border:0;
 border-radius:9px;
-font-size:13px;
 font-weight:800;
 cursor:pointer;
 color:#fff;
+touch-action:manipulation;
 }
 
 .preview-btn{
@@ -333,12 +350,16 @@ grid-template-columns:1fr;
 }
 
 button{
-height:38px;
+height:40px;
 }
 
 }
 
 </style>
+
+<!-- مكتبة إنشاء PDF -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </head>
 
@@ -406,6 +427,7 @@ type="text"
 inputmode="numeric"
 maxlength="11"
 placeholder="اختياري - 11 رقم"
+autocomplete="off"
 >
 
 </div>
@@ -424,6 +446,7 @@ placeholder="اختياري - 11 رقم"
 id="customerName"
 type="text"
 placeholder="اكتب اسم العميل"
+autocomplete="name"
 required
 >
 
@@ -618,7 +641,7 @@ type="button"
 class="save-btn"
 id="saveBtn"
 >
-حفظ الفاتورة كصورة
+حفظ PDF
 </button>
 
 </div>
@@ -821,7 +844,8 @@ document.getElementById("receiptWrap");
 
 
 /* ==========================
-   رقم العقد أرقام فقط
+   رقم العقد
+   اختياري - 11 رقم
 ========================== */
 
 contractNumber.addEventListener(
@@ -836,7 +860,7 @@ this.value.replace(/\D/g,"").slice(0,11);
 
 
 /* ==========================
-   الحصول على مدة العقد
+   مدة العقد
 ========================== */
 
 function getDuration(){
@@ -860,7 +884,7 @@ days:d
 
 
 /* ==========================
-   حساب السنوات المحتسبة
+   السنوات المحتسبة
 ========================== */
 
 function getBillableYears(){
@@ -870,6 +894,11 @@ getDuration();
 
 let years =
 duration.years;
+
+/*
+أي شهر أو يوم زائد
+يحسب سنة إضافية
+*/
 
 if(
 duration.months > 0 ||
@@ -886,7 +915,7 @@ return years;
 
 
 /* ==========================
-   حساب رسوم المنصة
+   رسوم المنصة
 ========================== */
 
 function calculatePlatform(){
@@ -921,7 +950,7 @@ let fee = 0;
 
 /*
 السكني:
-كل سنة أو جزء منها = 125 ريال
+كل سنة أو جزء منها = 125
 */
 
 if(type === "سكني"){
@@ -934,8 +963,8 @@ billableYears * 125;
 
 /*
 التجاري:
-أول سنة = 200 ريال
-كل سنة إضافية أو جزء منها = 400 ريال
+أول سنة = 200
+كل سنة إضافية = 400
 */
 
 if(type === "تجاري"){
@@ -974,7 +1003,7 @@ return Number(number).toLocaleString("en-US");
 
 
 /* ==========================
-   تحديث المجموع
+   تحديث الحساب
 ========================== */
 
 function updateTotal(){
@@ -990,17 +1019,19 @@ platform + office;
 
 
 platformValue.value =
-formatNumber(platform) + " ريال";
+formatNumber(platform) +
+" ريال";
 
 
 totalValue.value =
-formatNumber(total) + " ريال";
+formatNumber(total) +
+" ريال";
 
 }
 
 
 /* ==========================
-   نص مدة العقد
+   مدة العقد
 ========================== */
 
 function getDurationText(){
@@ -1030,10 +1061,12 @@ const now =
 new Date();
 
 const day =
-String(now.getDate()).padStart(2,"0");
+String(now.getDate())
+.padStart(2,"0");
 
 const month =
-String(now.getMonth()+1).padStart(2,"0");
+String(now.getMonth()+1)
+.padStart(2,"0");
 
 const year =
 now.getFullYear();
@@ -1050,7 +1083,7 @@ year
 
 
 /* ==========================
-   تحديث الفاتورة
+   تحديث المعاينة
 ========================== */
 
 function updateReceipt(){
@@ -1141,14 +1174,13 @@ return false;
 
 
 /*
-رقم العقد اختياري:
-إذا كان فارغًا يسمح بالمتابعة.
-إذا تم إدخاله يجب أن يكون 11 رقمًا.
+رقم العقد اختياري.
+إذا كُتب يجب أن يكون 11 رقمًا.
 */
 
 if(
 contractNumber.value !== "" &&
-! /^\d{11}$/.test(
+!/^\d{11}$/.test(
 contractNumber.value
 )
 ){
@@ -1291,7 +1323,60 @@ block:"center"
 
 
 /* ==========================
-   حفظ كصورة
+   تنظيف اسم الملف
+========================== */
+
+function getFileName(){
+
+let name =
+customerName.value.trim();
+
+if(!name){
+
+name =
+"فاتورة-إيجار";
+
+}
+
+
+/*
+إزالة الرموز التي لا يسمح بها
+نظام الملفات
+*/
+
+name =
+name.replace(
+/[\\/:*?"<>|]/g,
+""
+);
+
+
+/*
+إزالة المسافات الزائدة
+*/
+
+name =
+name.replace(
+(/\s+/g),
+" "
+).trim();
+
+
+if(!name){
+
+name =
+"فاتورة-إيجار";
+
+}
+
+
+return name;
+
+}
+
+
+/* ==========================
+   حفظ PDF
 ========================== */
 
 saveBtn.addEventListener(
@@ -1310,18 +1395,134 @@ receiptWrap.style.display =
 "block";
 
 
+/*
+التأكد من تحميل مكتبة PDF
+*/
+
+if(
+typeof window.jspdf ===
+"undefined"
+){
+
+errorBox.textContent =
+"⚠️ لم يتم تحميل أداة إنشاء PDF. تأكد من اتصال الإنترنت ثم حاول مرة أخرى.";
+
+errorBox.style.display =
+"block";
+
+return;
+
+}
+
+
+const {
+jsPDF
+} =
+window.jspdf;
+
+
+/*
+إنشاء ملف PDF
+*/
+
+const pdf =
+new jsPDF({
+orientation:"portrait",
+unit:"mm",
+format:"a4"
+});
+
+
+const pageWidth =
+210;
+
+
+/* خلفية */
+
+pdf.setFillColor(
+245,
+250,
+247
+);
+
+pdf.rect(
+0,
+0,
+210,
+297,
+"F"
+);
+
+
+/* الورقة */
+
+pdf.setFillColor(
+255,
+255,
+255
+);
+
+pdf.roundedRect(
+15,
+15,
+180,
+267,
+3,
+3,
+"F"
+);
+
+
+/* إطار */
+
+pdf.setDrawColor(
+220,
+232,
+225
+);
+
+pdf.setLineWidth(
+0.6
+);
+
+pdf.roundedRect(
+15,
+15,
+180,
+267,
+3,
+3,
+"S"
+);
+
+
+/*
+ملاحظة:
+النص العربي في jsPDF بدون خط عربي
+قد لا يظهر بشكل صحيح في بعض الأجهزة.
+لذلك يتم إنشاء محتوى PDF باستخدام
+صورة الفاتورة داخل PDF.
+*/
+
+
+/* إنشاء Canvas */
+
 const canvas =
-document.createElement("canvas");
+document.createElement(
+"canvas"
+);
 
 const ctx =
-canvas.getContext("2d");
+canvas.getContext(
+"2d"
+);
 
 
 const width =
-900;
+1200;
 
 const height =
-1150;
+1600;
 
 
 canvas.width =
@@ -1331,10 +1532,10 @@ canvas.height =
 height;
 
 
-/* الخلفية */
+/* خلفية Canvas */
 
 ctx.fillStyle =
-"#eef5f1";
+"#f5faf7";
 
 ctx.fillRect(
 0,
@@ -1346,64 +1547,51 @@ height
 
 /* الورقة */
 
-const x =
-70;
-
-const y =
-40;
-
-const w =
-760;
-
-const h =
-1070;
-
-
 ctx.fillStyle =
 "#ffffff";
 
 ctx.fillRect(
-x,
-y,
-w,
-h
+70,
+60,
+1060,
+1480
 );
 
 
-/* إطار الورقة */
+/* إطار */
 
 ctx.strokeStyle =
 "#dce8e1";
 
 ctx.lineWidth =
-3;
+4;
 
 ctx.strokeRect(
-x,
-y,
-w,
-h
+70,
+60,
+1060,
+1480
 );
 
 
 /* العنوان */
 
-ctx.textAlign =
-"center";
-
 ctx.direction =
 "rtl";
+
+ctx.textAlign =
+"center";
 
 ctx.fillStyle =
 "#087443";
 
 ctx.font =
-"bold 38px Arial";
+"bold 48px Arial";
 
 ctx.fillText(
 "شركة غسان القابضة",
 width / 2,
-110
+145
 );
 
 
@@ -1411,12 +1599,12 @@ ctx.fillStyle =
 "#17202a";
 
 ctx.font =
-"bold 25px Arial";
+"bold 32px Arial";
 
 ctx.fillText(
 "فاتورة إيجار",
 width / 2,
-150
+195
 );
 
 
@@ -1426,13 +1614,13 @@ ctx.fillStyle =
 "#64748b";
 
 ctx.font =
-"18px Arial";
+"22px Arial";
 
 ctx.fillText(
 "التاريخ: " +
 getToday(),
 width / 2,
-185
+235
 );
 
 
@@ -1441,21 +1629,24 @@ width / 2,
 ctx.strokeStyle =
 "#cbd5d1";
 
+ctx.lineWidth =
+2;
+
 ctx.setLineDash([
-8,
-8
+10,
+10
 ]);
 
 ctx.beginPath();
 
 ctx.moveTo(
-110,
-220
+130,
+280
 );
 
 ctx.lineTo(
-790,
-220
+1070,
+280
 );
 
 ctx.stroke();
@@ -1466,13 +1657,13 @@ ctx.setLineDash([]);
 /* البيانات */
 
 let startY =
-275;
+350;
 
 const rightX =
-760;
+1010;
 
 const leftX =
-140;
+190;
 
 
 function drawRow(
@@ -1480,14 +1671,17 @@ label,
 value
 ){
 
+ctx.direction =
+"rtl";
+
+ctx.textAlign =
+"right";
+
 ctx.fillStyle =
 "#64748b";
 
 ctx.font =
-"20px Arial";
-
-ctx.textAlign =
-"right";
+"24px Arial";
 
 ctx.fillText(
 label,
@@ -1496,14 +1690,14 @@ startY
 );
 
 
+ctx.textAlign =
+"left";
+
 ctx.fillStyle =
 "#17202a";
 
 ctx.font =
-"bold 21px Arial";
-
-ctx.textAlign =
-"left";
+"bold 25px Arial";
 
 ctx.fillText(
 value,
@@ -1511,10 +1705,13 @@ leftX,
 startY
 );
 
-startY += 72;
+
+startY += 100;
 
 }
 
+
+/* نوع العقد */
 
 drawRow(
 "نوع العقد",
@@ -1522,11 +1719,15 @@ contractType.value
 );
 
 
+/* رقم العقد */
+
 drawRow(
 "رقم العقد",
 contractNumber.value || "-"
 );
 
+
+/* العميل */
 
 drawRow(
 "اسم العميل",
@@ -1534,11 +1735,15 @@ customerName.value.trim()
 );
 
 
+/* المدة */
+
 drawRow(
 "مدة العقد",
 getDurationText()
 );
 
+
+/* الرسوم */
 
 const platform =
 calculatePlatform();
@@ -1572,47 +1777,50 @@ ctx.fillStyle =
 "#f1f8f4";
 
 ctx.fillRect(
-110,
-startY - 35,
-680,
-80
+130,
+startY - 45,
+940,
+100
 );
 
+
+ctx.direction =
+"rtl";
+
+ctx.textAlign =
+"right";
 
 ctx.fillStyle =
 "#087443";
 
 ctx.font =
-"bold 25px Arial";
-
-ctx.textAlign =
-"right";
+"bold 30px Arial";
 
 ctx.fillText(
 "المجموع",
 rightX - 20,
-startY + 10
+startY + 15
 );
 
+
+ctx.textAlign =
+"left";
 
 ctx.fillStyle =
 "#16a34a";
 
 ctx.font =
-"bold 28px Arial";
-
-ctx.textAlign =
-"left";
+"bold 34px Arial";
 
 ctx.fillText(
 formatNumber(total) +
 " ريال",
 leftX + 20,
-startY + 10
+startY + 15
 );
 
 
-/* أسفل الفاتورة */
+/* أسفل */
 
 ctx.textAlign =
 "center";
@@ -1621,38 +1829,76 @@ ctx.fillStyle =
 "#94a3b8";
 
 ctx.font =
-"16px Arial";
+"20px Arial";
 
 ctx.fillText(
 "شكرًا لتعاملكم مع شركة غسان القابضة",
 width / 2,
-1040
+1460
 );
 
 
-/* إنشاء الصورة */
+/* تحويل Canvas إلى صورة */
 
-canvas.toBlob(
-async function(blob){
+const imageData =
+canvas.toDataURL(
+"image/png",
+1.0
+);
 
-if(!blob){
 
-return;
+/*
+إضافة الصورة إلى PDF
+*/
 
-}
+pdf.addImage(
+imageData,
+"PNG",
+0,
+0,
+210,
+210
+);
 
+
+/*
+اسم الملف = اسم العميل
+*/
+
+const fileName =
+getFileName() +
+".pdf";
+
+
+/*
+تحويل PDF إلى Blob
+*/
+
+const pdfBlob =
+pdf.output(
+"blob"
+);
+
+
+/*
+ملف للمشاركة
+*/
 
 const file =
 new File(
-[blob],
-"فاتورة-إيجار.png",
+[pdfBlob],
+fileName,
 {
-type:"image/png"
+type:"application/pdf"
 }
 );
 
 
-/* مشاركة الجوال */
+/*
+أولاً:
+مشاركة الملف على الآيفون
+والأندرويد إذا كانت مدعومة
+*/
 
 if(
 navigator.share &&
@@ -1668,7 +1914,12 @@ await navigator.share({
 
 files:[file],
 
-title:"فاتورة إيجار"
+title:
+"فاتورة " +
+customerName.value.trim(),
+
+text:
+"فاتورة إيجار - شركة غسان القابضة"
 
 });
 
@@ -1676,6 +1927,11 @@ return;
 
 }
 catch(error){
+
+/*
+إذا المستخدم أغلق نافذة المشاركة
+لا نعتبرها مشكلة
+*/
 
 if(
 error.name ===
@@ -1691,14 +1947,21 @@ return;
 }
 
 
-/* الحفظ على الكمبيوتر */
+/*
+للأجهزة التي لا تدعم مشاركة الملفات:
+تنزيل PDF مباشرة
+*/
 
 const url =
-URL.createObjectURL(blob);
+URL.createObjectURL(
+pdfBlob
+);
 
 
 const link =
-document.createElement("a");
+document.createElement(
+"a"
+);
 
 
 link.href =
@@ -1706,14 +1969,20 @@ url;
 
 
 link.download =
-"فاتورة-إيجار.png";
+fileName;
+
+
+link.style.display =
+"none";
 
 
 document.body.appendChild(
 link
 );
 
+
 link.click();
+
 
 link.remove();
 
@@ -1726,14 +1995,11 @@ url
 );
 
 },
-1000
-);
-
-},
-"image/png"
+3000
 );
 
 });
+
 
 </script>
 
