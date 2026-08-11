@@ -248,7 +248,7 @@ button:disabled{
 
 
 /* ==================================================
-   منطقة المعاينة (تعديل الحاوي والتجاوب)
+   منطقة المعاينة (الإصلاح الشامل للعرض)
 ================================================== */
 
 .receipt-wrap{
@@ -257,10 +257,12 @@ button:disabled{
     width:100%;
     overflow:hidden;
     position:relative;
-    display:flex;
-    justify-content:center;
 }
 
+.receipt-scaler {
+    width: 794px;
+    transform-origin: 0 0;
+}
 
 /* ==================================================
    الفاتورة نفسها (مقاس A4)
@@ -280,8 +282,7 @@ button:disabled{
         sans-serif;
     direction:rtl;
     position:relative;
-    transform-origin: top center; /* التثبيت من الأعلى والمنتصف */
-    flex-shrink: 0;
+    box-sizing: border-box;
 }
 
 
@@ -843,6 +844,8 @@ class="receipt-wrap"
 id="receiptWrap"
 >
 
+<div class="receipt-scaler" id="receiptScaler">
+
 <div
 class="receipt"
 id="receipt"
@@ -1029,6 +1032,8 @@ id="rTotal"
 
 </div>
 
+</div>
+
 
 </div>
 
@@ -1080,6 +1085,9 @@ document.getElementById("saveBtn");
 
 const receiptWrap =
 document.getElementById("receiptWrap");
+
+const receiptScaler =
+document.getElementById("receiptScaler");
 
 const receipt =
 document.getElementById("receipt");
@@ -1185,16 +1193,12 @@ function calculatePlatform(){
         getBillableYears();
 
 
-    /* السكني */
-
     if(type === "سكني"){
 
         return years * 125;
 
     }
 
-
-    /* التجاري */
 
     if(type === "تجاري"){
 
@@ -1530,7 +1534,7 @@ updateTotal();
 
 
 /* ==================================================
-   تصغير المعاينة تلقائيًا لتناسب شاشة الجهاز (المعدل)
+   إصلاح العرض والتحجيم تلقائياً ومحاذاة الفاتورة
 ================================================== */
 
 function resizeReceiptPreview(){
@@ -1559,13 +1563,11 @@ function resizeReceiptPreview(){
             1
         );
 
-    /* تطبيق التحجيم بدقة */
-    receipt.style.transform =
+    receiptScaler.style.transform =
         "scale(" +
         scale +
         ")";
 
-    /* تعديل ارتفاع الحاوي ليطابق الارتفاع المصغّر وتفادي المساحات الميتة */
     receiptWrap.style.height =
         (
             1123 *
@@ -1576,10 +1578,6 @@ function resizeReceiptPreview(){
 }
 
 
-/* ==================================================
-   تحديث المعاينة عند تغيير حجم الشاشة
-================================================== */
-
 window.addEventListener(
     "resize",
     function(){
@@ -1589,10 +1587,6 @@ window.addEventListener(
     }
 );
 
-
-/* ==================================================
-   عند تدوير الجوال
-================================================== */
 
 window.addEventListener(
     "orientationchange",
@@ -1624,7 +1618,7 @@ previewBtn.addEventListener(
         updateReceipt();
 
         receiptWrap.style.display =
-            "flex";
+            "block";
 
         resizeReceiptPreview();
 
@@ -1691,7 +1685,6 @@ function getFileName(){
 
 /* ==================================================
    إنشاء PDF
-   صفحة A4 واحدة
 ================================================== */
 
 async function createPDF(){
@@ -1706,7 +1699,6 @@ async function createPDF(){
             )
     );
 
-    /* التقاط الصفحة بأبعاد A4 الحقيقية وليس بالأبعاد المصغرة للمعاينة */
     const canvas =
         await html2canvas(
             receipt,
@@ -1821,7 +1813,7 @@ saveBtn.addEventListener(
         updateReceipt();
 
         receiptWrap.style.display =
-            "flex";
+            "block";
 
         resizeReceiptPreview();
 
