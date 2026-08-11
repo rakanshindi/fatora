@@ -4,18 +4,13 @@
 <head>
 
 <meta charset="utf-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#087443">
 
 <title>فاتورة إيجار | شركة غسان القابضة</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 
 <style>
 
@@ -253,7 +248,7 @@ button:disabled{
 
 
 /* ==================================================
-   منطقة المعاينة
+   منطقة المعاينة (تعديل الحاوي والتجاوب)
 ================================================== */
 
 .receipt-wrap{
@@ -262,19 +257,19 @@ button:disabled{
     width:100%;
     overflow:hidden;
     position:relative;
+    display:flex;
+    justify-content:center;
 }
 
 
 /* ==================================================
-   الفاتورة نفسها
-   مقاس A4 تقريبًا
+   الفاتورة نفسها (مقاس A4)
 ================================================== */
 
 .receipt{
     width:794px;
     height:1123px;
     min-height:1123px;
-    margin:0 auto;
     background:#fff;
     padding:55px 55px 45px;
     color:#17202a;
@@ -285,7 +280,8 @@ button:disabled{
         sans-serif;
     direction:rtl;
     position:relative;
-    transform-origin:top center;
+    transform-origin: top center; /* التثبيت من الأعلى والمنتصف */
+    flex-shrink: 0;
 }
 
 
@@ -1140,11 +1136,6 @@ function getBillableYears(){
     let years =
         d.years;
 
-    /*
-    إذا كان هناك شهر أو يوم إضافي
-    يُحسب كفترة سنة إضافية.
-    */
-
     if(
         d.months > 0 ||
         d.days > 0
@@ -1212,11 +1203,6 @@ function calculatePlatform(){
             return 200;
 
         }
-
-        /*
-        أول سنة = 200
-        كل سنة إضافية أو جزء منها = 400
-        */
 
         return 200 +
             (
@@ -1418,11 +1404,6 @@ function validate(){
     }
 
 
-    /*
-    رقم العقد اختياري
-    لكن إذا تم إدخاله يجب أن يكون 11 رقمًا
-    */
-
     if(
         contractNumber.value !== "" &&
         !/^\d{11}$/.test(
@@ -1549,7 +1530,7 @@ updateTotal();
 
 
 /* ==================================================
-   تصغير المعاينة تلقائيًا لتناسب شاشة الجهاز
+   تصغير المعاينة تلقائيًا لتناسب شاشة الجهاز (المعدل)
 ================================================== */
 
 function resizeReceiptPreview(){
@@ -1562,22 +1543,15 @@ function resizeReceiptPreview(){
 
     }
 
-
     const availableWidth =
-        receiptWrap.clientWidth - 10;
+        receiptWrap.clientWidth;
 
     const receiptWidth =
         794;
 
-
     let scale =
         availableWidth /
         receiptWidth;
-
-
-    /*
-    لا نكبر الفاتورة عن حجمها الطبيعي
-    */
 
     scale =
         Math.min(
@@ -1585,17 +1559,13 @@ function resizeReceiptPreview(){
             1
         );
 
-
+    /* تطبيق التحجيم بدقة */
     receipt.style.transform =
         "scale(" +
         scale +
         ")";
 
-
-    /*
-    ضبط ارتفاع منطقة المعاينة
-    */
-
+    /* تعديل ارتفاع الحاوي ليطابق الارتفاع المصغّر وتفادي المساحات الميتة */
     receiptWrap.style.height =
         (
             1123 *
@@ -1651,36 +1621,25 @@ previewBtn.addEventListener(
 
         }
 
-
         updateReceipt();
 
-
         receiptWrap.style.display =
-            "block";
-
-
-        /*
-        تصغير الفاتورة مباشرة
-        لتناسب عرض شاشة الجهاز
-        */
+            "flex";
 
         resizeReceiptPreview();
-
 
         setTimeout(
             function(){
 
                 resizeReceiptPreview();
 
-
                 receiptWrap.scrollIntoView({
 
                     behavior:"smooth",
 
-                    block:"center"
+                    block:"start"
 
                 });
-
 
             },
             100
@@ -1699,18 +1658,12 @@ function getFileName(){
     let name =
         customerName.value.trim();
 
-
     if(!name){
 
         name =
             "فاتورة-إيجار";
 
     }
-
-
-    /*
-    منع الرموز التي لا يسمح بها نظام الملفات
-    */
 
     name =
         name.replace(
@@ -1718,13 +1671,11 @@ function getFileName(){
             ""
         );
 
-
     name =
         name.replace(
             /\s+/g,
             " "
         ).trim();
-
 
     if(!name){
 
@@ -1732,7 +1683,6 @@ function getFileName(){
             "فاتورة-إيجار";
 
     }
-
 
     return name;
 
@@ -1746,16 +1696,7 @@ function getFileName(){
 
 async function createPDF(){
 
-    /*
-    تحديث البيانات
-    */
-
     updateReceipt();
-
-
-    /*
-    ننتظر قليلًا حتى يكتمل الرسم
-    */
 
     await new Promise(
         resolve =>
@@ -1765,12 +1706,7 @@ async function createPDF(){
             )
     );
 
-
-    /*
-    التقاط الفاتورة بالحجم الأصلي
-    وليس بحجم المعاينة المصغر
-    */
-
+    /* التقاط الصفحة بأبعاد A4 الحقيقية وليس بالأبعاد المصغرة للمعاينة */
     const canvas =
         await html2canvas(
             receipt,
@@ -1802,10 +1738,6 @@ async function createPDF(){
         window.jspdf;
 
 
-    /*
-    A4
-    */
-
     const pdf =
         new jsPDF({
             orientation:"portrait",
@@ -1822,10 +1754,6 @@ async function createPDF(){
         297;
 
 
-    /*
-    نسبة الصورة
-    */
-
     const imgWidth =
         pageWidth;
 
@@ -1834,11 +1762,6 @@ async function createPDF(){
         imgWidth /
         canvas.width;
 
-
-    /*
-    نضمن عدم خروج الصورة
-    من صفحة A4
-    */
 
     const finalHeight =
         Math.min(
@@ -1854,10 +1777,6 @@ async function createPDF(){
         );
 
 
-    /*
-    إضافة الفاتورة إلى صفحة واحدة
-    */
-
     pdf.addImage(
         imageData,
         "JPEG",
@@ -1869,10 +1788,6 @@ async function createPDF(){
         "FAST"
     );
 
-
-    /*
-    اسم الملف
-    */
 
     const fileName =
         getFileName() +
@@ -1903,28 +1818,12 @@ saveBtn.addEventListener(
 
         }
 
-
-        /*
-        تحديث الفاتورة
-        */
-
         updateReceipt();
 
-
         receiptWrap.style.display =
-            "block";
-
-
-        /*
-        تحديث المعاينة
-        */
+            "flex";
 
         resizeReceiptPreview();
-
-
-        /*
-        التأكد من تحميل المكتبات
-        */
 
         if(
             typeof html2canvas ===
@@ -1954,17 +1853,12 @@ saveBtn.addEventListener(
         }
 
 
-        /*
-        حالة التحميل
-        */
-
         const oldText =
             saveBtn.textContent;
 
 
         saveBtn.textContent =
             "جاري تجهيز PDF...";
-
 
         saveBtn.disabled =
             true;
@@ -1975,25 +1869,14 @@ saveBtn.addEventListener(
             const result =
                 await createPDF();
 
-
             const pdf =
                 result.pdf;
 
             const fileName =
                 result.fileName;
 
-
-            /*
-            تحويل PDF إلى Blob
-            */
-
             const blob =
                 pdf.output("blob");
-
-
-            /*
-            ملف PDF للمشاركة
-            */
 
             const file =
                 new File(
@@ -2003,12 +1886,6 @@ saveBtn.addEventListener(
                         type:"application/pdf"
                     }
                 );
-
-
-            /*
-            iPhone / Android
-            المشاركة المباشرة
-            */
 
             if(
                 navigator.share &&
@@ -2033,7 +1910,6 @@ saveBtn.addEventListener(
 
                     });
 
-
                     saveBtn.textContent =
                         oldText;
 
@@ -2044,11 +1920,6 @@ saveBtn.addEventListener(
 
                 }
                 catch(error){
-
-                    /*
-                    إذا أغلق المستخدم نافذة المشاركة
-                    لا نعتبره خطأ
-                    */
 
                     if(
                         error.name ===
@@ -2069,46 +1940,32 @@ saveBtn.addEventListener(
 
             }
 
-
-            /*
-            الحفظ المباشر للأجهزة
-            التي لا تدعم المشاركة
-            */
-
             const url =
                 URL.createObjectURL(
                     blob
                 );
-
 
             const link =
                 document.createElement(
                     "a"
                 );
 
-
             link.href =
                 url;
-
 
             link.download =
                 fileName;
 
-
             link.style.display =
                 "none";
-
 
             document.body.appendChild(
                 link
             );
 
-
             link.click();
 
-
             link.remove();
-
 
             setTimeout(
                 function(){
@@ -2121,7 +1978,6 @@ saveBtn.addEventListener(
                 5000
             );
 
-
         }
         catch(error){
 
@@ -2130,17 +1986,14 @@ saveBtn.addEventListener(
                 error
             );
 
-
             showError(
                 "⚠️ حدث خطأ أثناء إنشاء ملف PDF. حاول مرة أخرى."
             );
 
         }
 
-
         saveBtn.textContent =
             oldText;
-
 
         saveBtn.disabled =
             false;
@@ -2182,14 +2035,8 @@ document.addEventListener(
     }
 );
 
-
-/*
-منع تكبير النقر المزدوج
-*/
-
 let lastTouchEnd =
     0;
-
 
 document.addEventListener(
     "touchend",
@@ -2198,7 +2045,6 @@ document.addEventListener(
         const now =
             Date.now();
 
-
         if(
             now - lastTouchEnd <= 300
         ){
@@ -2206,7 +2052,6 @@ document.addEventListener(
             event.preventDefault();
 
         }
-
 
         lastTouchEnd =
             now;
