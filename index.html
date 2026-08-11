@@ -12,6 +12,8 @@ content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,vie
 
 <title>فاتورة إيجار | شركة غسان القابضة</title>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 
 *{
@@ -38,7 +40,7 @@ touch-action:manipulation;
 .wrap{
 max-width:700px;
 margin:auto;
-padding:15px;
+padding:12px;
 }
 
 .card{
@@ -50,19 +52,20 @@ box-shadow:0 5px 25px rgba(0,0,0,.08);
 
 .header{
 text-align:center;
-margin-bottom:15px;
+margin-bottom:16px;
 }
 
 .title{
 margin:0;
 font-size:22px;
-font-weight:800;
+font-weight:900;
 color:#087443;
 }
 
 .subtitle{
-margin:4px 0 0;
-font-size:12px;
+margin-top:5px;
+font-size:13px;
+font-weight:700;
 color:#64748b;
 }
 
@@ -76,15 +79,15 @@ gap:10px;
 min-width:0;
 }
 
-.field.full{
+.full{
 grid-column:1/-1;
 }
 
 label{
 display:block;
 font-size:12px;
-font-weight:700;
-margin-bottom:4px;
+font-weight:800;
+margin-bottom:5px;
 }
 
 .req{
@@ -100,13 +103,13 @@ font-size:16px;
 input,
 select{
 width:100%;
-height:40px;
+height:42px;
+padding:0 10px;
 border:1px solid #d5dce0;
 border-radius:8px;
-padding:0 10px;
-outline:none;
 background:#fff;
 color:#17202a;
+outline:none;
 -webkit-appearance:none;
 appearance:none;
 touch-action:manipulation;
@@ -118,16 +121,9 @@ border-color:#087443;
 box-shadow:0 0 0 2px #d8eee2;
 }
 
-.total-input{
-font-weight:900;
-color:#16a34a;
-background:#f8fbf9;
-text-align:center;
-}
-
 .duration-grid{
 display:grid;
-grid-template-columns:1fr 1fr 1fr;
+grid-template-columns:repeat(3,1fr);
 gap:8px;
 }
 
@@ -137,22 +133,39 @@ text-align:center;
 
 .duration-item select{
 text-align:center;
-font-weight:700;
+font-weight:800;
+}
+
+.total-input{
+background:#f8fbf9;
+font-weight:900;
+color:#16a34a;
+text-align:center;
+}
+
+.note{
+font-size:10px;
+line-height:1.6;
+color:#64748b;
+background:#f8fbf9;
+border:1px solid #e0ebe5;
+border-radius:8px;
+padding:8px;
+text-align:center;
 }
 
 .buttons{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:8px;
-margin-top:15px;
+margin-top:14px;
 }
 
 button{
-width:100%;
-height:42px;
+height:43px;
 border:0;
 border-radius:9px;
-font-weight:800;
+font-weight:900;
 cursor:pointer;
 color:#fff;
 touch-action:manipulation;
@@ -170,108 +183,6 @@ button:active{
 transform:scale(.98);
 }
 
-.receipt-wrap{
-margin-top:20px;
-display:none;
-}
-
-.receipt{
-width:100%;
-max-width:430px;
-margin:auto;
-background:#fff;
-border:1px solid #dce8e1;
-box-shadow:0 4px 20px rgba(0,0,0,.08);
-padding:22px 18px;
-position:relative;
-}
-
-.receipt-top{
-text-align:center;
-padding-bottom:14px;
-border-bottom:1px dashed #cbd5d1;
-}
-
-.receipt-office{
-font-size:20px;
-font-weight:900;
-color:#087443;
-}
-
-.receipt-title{
-font-size:14px;
-font-weight:800;
-margin-top:5px;
-}
-
-.receipt-date{
-font-size:10px;
-color:#64748b;
-margin-top:4px;
-}
-
-.receipt-body{
-padding:15px 0;
-}
-
-.row{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-padding:9px 0;
-border-bottom:1px solid #edf1ef;
-font-size:12px;
-}
-
-.row:last-child{
-border-bottom:0;
-}
-
-.row-label{
-color:#64748b;
-}
-
-.row-value{
-font-weight:800;
-color:#17202a;
-text-align:left;
-word-break:break-word;
-}
-
-.total{
-margin-top:8px;
-padding:12px;
-background:#f1f8f4;
-border:1px solid #d5e8de;
-border-radius:9px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.total-label{
-font-size:13px;
-font-weight:800;
-color:#087443;
-}
-
-.total-value{
-font-size:17px;
-font-weight:900;
-color:#16a34a;
-}
-
-.receipt-bottom{
-margin-top:15px;
-padding-top:12px;
-border-top:1px dashed #cbd5d1;
-text-align:center;
-font-size:9px;
-color:#94a3b8;
-line-height:1.6;
-}
-
 .error{
 display:none;
 margin-top:10px;
@@ -281,47 +192,138 @@ border:1px solid #fecdd3;
 border-radius:8px;
 color:#9f1239;
 font-size:11px;
-font-weight:700;
+font-weight:800;
 text-align:center;
 }
 
-.platform-note{
-grid-column:1/-1;
-font-size:10px;
-color:#64748b;
-background:#f8fbf9;
-border:1px solid #e0ebe5;
-border-radius:7px;
-padding:7px;
+.receipt-wrap{
+display:none;
+margin-top:20px;
+}
+
+.receipt{
+max-width:500px;
+margin:auto;
+background:#fff;
+border:1px solid #dce8e1;
+border-radius:12px;
+padding:20px;
+box-shadow:0 4px 20px rgba(0,0,0,.08);
+}
+
+.receipt-header{
 text-align:center;
-line-height:1.5;
+padding-bottom:14px;
+border-bottom:2px solid #087443;
+}
+
+.receipt-company{
+font-size:22px;
+font-weight:900;
+color:#087443;
+}
+
+.receipt-title{
+font-size:15px;
+font-weight:800;
+margin-top:5px;
+}
+
+.receipt-date{
+font-size:11px;
+color:#64748b;
+margin-top:5px;
+}
+
+.receipt-table{
+margin-top:15px;
+border:1px solid #dce8e1;
+border-radius:9px;
+overflow:hidden;
+}
+
+.receipt-row{
+display:grid;
+grid-template-columns:40% 60%;
+border-bottom:1px solid #e7eee9;
+min-height:42px;
+align-items:center;
+}
+
+.receipt-row:last-child{
+border-bottom:0;
+}
+
+.receipt-label{
+padding:8px 10px;
+background:#f5faf7;
+font-size:11px;
+font-weight:800;
+color:#64748b;
+}
+
+.receipt-value{
+padding:8px 10px;
+font-size:12px;
+font-weight:800;
+color:#17202a;
+word-break:break-word;
+}
+
+.receipt-total{
+margin-top:15px;
+padding:14px;
+background:#f1f8f4;
+border:1px solid #cfe5d8;
+border-radius:10px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.receipt-total-label{
+font-size:14px;
+font-weight:900;
+color:#087443;
+}
+
+.receipt-total-value{
+font-size:20px;
+font-weight:900;
+color:#16a34a;
+}
+
+.receipt-footer{
+text-align:center;
+margin-top:14px;
+padding-top:12px;
+border-top:1px dashed #cbd5d1;
+font-size:9px;
+line-height:1.6;
+color:#94a3b8;
 }
 
 @media(max-width:600px){
 
 .wrap{
-padding:8px;
+padding:7px;
 }
 
 .card{
-padding:12px;
+padding:13px;
 border-radius:12px;
 }
 
 .title{
-font-size:18px;
+font-size:19px;
 }
 
 .form-grid{
 grid-template-columns:1fr;
-gap:8px;
+gap:9px;
 }
 
-.field.full{
-grid-column:auto;
-}
-
-.platform-note{
+.full{
 grid-column:auto;
 }
 
@@ -329,16 +331,8 @@ grid-column:auto;
 gap:5px;
 }
 
-.buttons{
-grid-template-columns:1fr 1fr;
-}
-
 .receipt{
-padding:18px 14px;
-}
-
-.receipt-office{
-font-size:18px;
+padding:15px;
 }
 
 }
@@ -349,17 +343,9 @@ font-size:18px;
 grid-template-columns:1fr;
 }
 
-button{
-height:40px;
-}
-
 }
 
 </style>
-
-<!-- مكتبة إنشاء PDF -->
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </head>
 
@@ -385,8 +371,6 @@ height:40px;
 <div class="form-grid">
 
 
-<!-- نوع العقد -->
-
 <div class="field full">
 
 <label>
@@ -394,7 +378,7 @@ height:40px;
 <span class="req">*</span>
 </label>
 
-<select id="contractType" required>
+<select id="contractType">
 
 <option value="">
 اختر نوع العقد
@@ -412,8 +396,6 @@ height:40px;
 
 </div>
 
-
-<!-- رقم العقد -->
 
 <div class="field full">
 
@@ -433,8 +415,6 @@ autocomplete="off"
 </div>
 
 
-<!-- اسم العميل -->
-
 <div class="field full">
 
 <label>
@@ -447,13 +427,10 @@ id="customerName"
 type="text"
 placeholder="اكتب اسم العميل"
 autocomplete="name"
-required
 >
 
 </div>
 
-
-<!-- مدة العقد -->
 
 <div class="field full">
 
@@ -464,12 +441,9 @@ required
 
 <div class="duration-grid">
 
-
 <div class="duration-item">
 
-<label>
-سنة
-</label>
+<label>سنة</label>
 
 <select id="durationYears">
 
@@ -480,7 +454,7 @@ required
 for(let i=1;i<=50;i++){
 
 document.write(
-`<option value="${i}">${i}</option>`
+'<option value="'+i+'">'+i+'</option>'
 );
 
 }
@@ -494,9 +468,7 @@ document.write(
 
 <div class="duration-item">
 
-<label>
-شهر
-</label>
+<label>شهر</label>
 
 <select id="durationMonths">
 
@@ -507,7 +479,7 @@ document.write(
 for(let i=1;i<=11;i++){
 
 document.write(
-`<option value="${i}">${i}</option>`
+'<option value="'+i+'">'+i+'</option>'
 );
 
 }
@@ -521,9 +493,7 @@ document.write(
 
 <div class="duration-item">
 
-<label>
-يوم
-</label>
+<label>يوم</label>
 
 <select id="durationDays">
 
@@ -534,7 +504,7 @@ document.write(
 for(let i=1;i<=30;i++){
 
 document.write(
-`<option value="${i}">${i}</option>`
+'<option value="'+i+'">'+i+'</option>'
 );
 
 }
@@ -550,8 +520,6 @@ document.write(
 </div>
 
 
-<!-- رسوم المنصة -->
-
 <div class="field">
 
 <label>
@@ -561,15 +529,12 @@ document.write(
 <input
 id="platformValue"
 class="total-input"
-type="text"
 readonly
 value="0 ريال"
 >
 
 </div>
 
-
-<!-- رسوم المكتب -->
 
 <div class="field">
 
@@ -584,13 +549,10 @@ type="number"
 min="0"
 inputmode="decimal"
 placeholder="0"
-required
 >
 
 </div>
 
-
-<!-- المجموع -->
 
 <div class="field full">
 
@@ -601,7 +563,6 @@ required
 <input
 id="totalValue"
 class="total-input"
-type="text"
 readonly
 value="0 ريال"
 >
@@ -609,11 +570,15 @@ value="0 ريال"
 </div>
 
 
-<div class="platform-note">
+<div class="field full">
 
-رسوم المنصة السكنية: 125 ريال لكل سنة أو جزء منها.
+<div class="note">
+
+السكني: 125 ريال لكل سنة أو جزء منها.
 <br>
-رسوم المنصة التجارية: أول سنة 200 ريال، وكل سنة إضافية أو جزء منها 400 ريال.
+التجاري: أول سنة 200 ريال، وكل سنة إضافية أو جزء منها 400 ريال.
+
+</div>
 
 </div>
 
@@ -621,9 +586,7 @@ value="0 ريال"
 </div>
 
 
-<div id="error" class="error">
-⚠️ يرجى إكمال البيانات المطلوبة
-</div>
+<div id="error" class="error"></div>
 
 
 <div class="buttons">
@@ -647,13 +610,19 @@ id="saveBtn"
 </div>
 
 
-<div class="receipt-wrap" id="receiptWrap">
+<div
+class="receipt-wrap"
+id="receiptWrap"
+>
 
-<div class="receipt" id="receipt">
+<div
+class="receipt"
+id="receipt"
+>
 
-<div class="receipt-top">
+<div class="receipt-header">
 
-<div class="receipt-office">
+<div class="receipt-company">
 شركة غسان القابضة
 </div>
 
@@ -661,133 +630,138 @@ id="saveBtn"
 فاتورة إيجار
 </div>
 
-<div class="receipt-date" id="receiptDate">
+<div
+class="receipt-date"
+id="receiptDate"
+>
 </div>
 
 </div>
 
 
-<div class="receipt-body">
+<div class="receipt-table">
 
 
-<div class="row">
+<div class="receipt-row">
 
-<span class="row-label">
+<div class="receipt-label">
 نوع العقد
-</span>
+</div>
 
-<span
-class="row-value"
+<div
+class="receipt-value"
 id="rContractType"
 >
 -
-</span>
+</div>
 
 </div>
 
 
-<div class="row">
+<div class="receipt-row">
 
-<span class="row-label">
+<div class="receipt-label">
 رقم العقد
-</span>
+</div>
 
-<span
-class="row-value"
+<div
+class="receipt-value"
 id="rContractNumber"
 >
 -
-</span>
+</div>
 
 </div>
 
 
-<div class="row">
+<div class="receipt-row">
 
-<span class="row-label">
+<div class="receipt-label">
 اسم العميل
-</span>
+</div>
 
-<span
-class="row-value"
+<div
+class="receipt-value"
 id="rCustomer"
 >
 -
-</span>
+</div>
 
 </div>
 
 
-<div class="row">
+<div class="receipt-row">
 
-<span class="row-label">
+<div class="receipt-label">
 مدة العقد
-</span>
+</div>
 
-<span
-class="row-value"
+<div
+class="receipt-value"
 id="rDuration"
 >
 0 سنة / 0 شهر / 0 يوم
-</span>
+</div>
 
 </div>
 
 
-<div class="row">
+<div class="receipt-row">
 
-<span class="row-label">
+<div class="receipt-label">
 رسوم المنصة
-</span>
+</div>
 
-<span
-class="row-value"
+<div
+class="receipt-value"
 id="rPlatform"
 >
 0 ريال
-</span>
+</div>
 
 </div>
 
 
-<div class="row">
+<div class="receipt-row">
 
-<span class="row-label">
+<div class="receipt-label">
 رسوم المكتب
-</span>
+</div>
 
-<span
-class="row-value"
+<div
+class="receipt-value"
 id="rOffice"
 >
 0 ريال
-</span>
+</div>
 
 </div>
 
 
-<div class="total">
+</div>
 
-<span class="total-label">
+
+<div class="receipt-total">
+
+<div class="receipt-total-label">
 المجموع
-</span>
+</div>
 
-<span
-class="total-value"
+<div
+class="receipt-total-value"
 id="rTotal"
 >
 0 ريال
-</span>
+</div>
 
 </div>
 
 
-</div>
+<div class="receipt-footer">
 
-
-<div class="receipt-bottom">
-
-شكرًا لتعاملكم مع شركة غسان القابضة
+شركة غسان القابضة
+<br>
+شكرًا لتعاملكم معنا
 
 </div>
 
@@ -845,7 +819,6 @@ document.getElementById("receiptWrap");
 
 /* ==========================
    رقم العقد
-   اختياري - 11 رقم
 ========================== */
 
 contractNumber.addEventListener(
@@ -853,7 +826,9 @@ contractNumber.addEventListener(
 function(){
 
 this.value =
-this.value.replace(/\D/g,"").slice(0,11);
+this.value
+.replace(/\D/g,"")
+.slice(0,11);
 
 }
 );
@@ -865,19 +840,17 @@ this.value.replace(/\D/g,"").slice(0,11);
 
 function getDuration(){
 
-const y =
-parseInt(durationYears.value,10) || 0;
-
-const m =
-parseInt(durationMonths.value,10) || 0;
-
-const d =
-parseInt(durationDays.value,10) || 0;
-
 return {
-years:y,
-months:m,
-days:d
+
+years:
+parseInt(durationYears.value,10) || 0,
+
+months:
+parseInt(durationMonths.value,10) || 0,
+
+days:
+parseInt(durationDays.value,10) || 0
+
 };
 
 }
@@ -889,20 +862,21 @@ days:d
 
 function getBillableYears(){
 
-const duration =
+const d =
 getDuration();
 
 let years =
-duration.years;
+d.years;
+
 
 /*
 أي شهر أو يوم زائد
-يحسب سنة إضافية
+يحسب سنة إضافية.
 */
 
 if(
-duration.months > 0 ||
-duration.days > 0
+d.months > 0 ||
+d.days > 0
 ){
 
 years++;
@@ -923,16 +897,16 @@ function calculatePlatform(){
 const type =
 contractType.value;
 
-const duration =
+const d =
 getDuration();
 
 
 if(
 !type ||
 (
-duration.years === 0 &&
-duration.months === 0 &&
-duration.days === 0
+d.years === 0 &&
+d.months === 0 &&
+d.days === 0
 )
 ){
 
@@ -941,63 +915,46 @@ return 0;
 }
 
 
-const billableYears =
+const years =
 getBillableYears();
 
 
-let fee = 0;
-
-
-/*
-السكني:
-كل سنة أو جزء منها = 125
-*/
-
 if(type === "سكني"){
 
-fee =
-billableYears * 125;
+return years * 125;
 
 }
 
 
-/*
-التجاري:
-أول سنة = 200
-كل سنة إضافية = 400
-*/
-
 if(type === "تجاري"){
 
-if(billableYears === 1){
+if(years === 1){
 
-fee = 200;
+return 200;
 
-}else{
+}
 
-fee =
-200 +
+return 200 +
 (
-(billableYears - 1) * 400
+(years - 1) * 400
 );
 
 }
 
-}
 
-
-return fee;
+return 0;
 
 }
 
 
 /* ==========================
-   تنسيق الأرقام
+   تنسيق الرقم
 ========================== */
 
-function formatNumber(number){
+function formatNumber(value){
 
-return Number(number).toLocaleString("en-US");
+return Number(value)
+.toLocaleString("en-US");
 
 }
 
@@ -1012,7 +969,9 @@ const platform =
 calculatePlatform();
 
 const office =
-parseFloat(officeValue.value) || 0;
+parseFloat(
+officeValue.value
+) || 0;
 
 const total =
 platform + office;
@@ -1036,15 +995,15 @@ formatNumber(total) +
 
 function getDurationText(){
 
-const duration =
+const d =
 getDuration();
 
 return (
-duration.years +
+d.years +
 " سنة / " +
-duration.months +
+d.months +
 " شهر / " +
-duration.days +
+d.days +
 " يوم"
 );
 
@@ -1052,7 +1011,7 @@ duration.days +
 
 
 /* ==========================
-   التاريخ الميلادي
+   التاريخ
 ========================== */
 
 function getToday(){
@@ -1061,12 +1020,14 @@ const now =
 new Date();
 
 const day =
-String(now.getDate())
-.padStart(2,"0");
+String(
+now.getDate()
+).padStart(2,"0");
 
 const month =
-String(now.getMonth()+1)
-.padStart(2,"0");
+String(
+now.getMonth()+1
+).padStart(2,"0");
 
 const year =
 now.getFullYear();
@@ -1083,7 +1044,7 @@ year
 
 
 /* ==========================
-   تحديث المعاينة
+   تحديث الفاتورة
 ========================== */
 
 function updateReceipt(){
@@ -1092,7 +1053,9 @@ const platform =
 calculatePlatform();
 
 const office =
-parseFloat(officeValue.value) || 0;
+parseFloat(
+officeValue.value
+) || 0;
 
 const total =
 platform + office;
@@ -1160,11 +1123,9 @@ function validate(){
 
 if(!contractType.value){
 
-errorBox.textContent =
-"⚠️ يرجى اختيار نوع العقد";
-
-errorBox.style.display =
-"block";
+showError(
+"⚠️ يرجى اختيار نوع العقد"
+);
 
 contractType.focus();
 
@@ -1173,11 +1134,6 @@ return false;
 }
 
 
-/*
-رقم العقد اختياري.
-إذا كُتب يجب أن يكون 11 رقمًا.
-*/
-
 if(
 contractNumber.value !== "" &&
 !/^\d{11}$/.test(
@@ -1185,11 +1141,9 @@ contractNumber.value
 )
 ){
 
-errorBox.textContent =
-"⚠️ إذا تم إدخال رقم العقد، يجب أن يتكون من 11 رقم بالضبط";
-
-errorBox.style.display =
-"block";
+showError(
+"⚠️ رقم العقد يجب أن يكون 11 رقمًا"
+);
 
 contractNumber.focus();
 
@@ -1200,11 +1154,9 @@ return false;
 
 if(!customerName.value.trim()){
 
-errorBox.textContent =
-"⚠️ يرجى كتابة اسم العميل";
-
-errorBox.style.display =
-"block";
+showError(
+"⚠️ يرجى كتابة اسم العميل"
+);
 
 customerName.focus();
 
@@ -1213,21 +1165,19 @@ return false;
 }
 
 
-const duration =
+const d =
 getDuration();
 
 
 if(
-duration.years === 0 &&
-duration.months === 0 &&
-duration.days === 0
+d.years === 0 &&
+d.months === 0 &&
+d.days === 0
 ){
 
-errorBox.textContent =
-"⚠️ يرجى اختيار مدة العقد";
-
-errorBox.style.display =
-"block";
+showError(
+"⚠️ يرجى اختيار مدة العقد"
+);
 
 durationYears.focus();
 
@@ -1241,11 +1191,9 @@ officeValue.value === "" ||
 Number(officeValue.value) < 0
 ){
 
-errorBox.textContent =
-"⚠️ يرجى إدخال رسوم المكتب";
-
-errorBox.style.display =
-"block";
+showError(
+"⚠️ يرجى إدخال رسوم المكتب"
+);
 
 officeValue.focus();
 
@@ -1258,6 +1206,17 @@ errorBox.style.display =
 "none";
 
 return true;
+
+}
+
+
+function showError(message){
+
+errorBox.textContent =
+message;
+
+errorBox.style.display =
+"block";
 
 }
 
@@ -1291,7 +1250,6 @@ officeValue.addEventListener(
 updateTotal
 );
 
-
 updateTotal();
 
 
@@ -1323,13 +1281,14 @@ block:"center"
 
 
 /* ==========================
-   تنظيف اسم الملف
+   اسم الملف
 ========================== */
 
 function getFileName(){
 
 let name =
 customerName.value.trim();
+
 
 if(!name){
 
@@ -1339,11 +1298,6 @@ name =
 }
 
 
-/*
-إزالة الرموز التي لا يسمح بها
-نظام الملفات
-*/
-
 name =
 name.replace(
 /[\\/:*?"<>|]/g,
@@ -1351,13 +1305,9 @@ name.replace(
 );
 
 
-/*
-إزالة المسافات الزائدة
-*/
-
 name =
 name.replace(
-(/\s+/g),
+/\s+/g,
 " "
 ).trim();
 
@@ -1376,7 +1326,686 @@ return name;
 
 
 /* ==========================
-   حفظ PDF
+   إنشاء PDF صفحة واحدة
+========================== */
+
+async function createPDF(){
+
+const {
+jsPDF
+} =
+window.jspdf;
+
+
+/*
+مقاس A4
+*/
+
+const pdf =
+new jsPDF({
+orientation:"portrait",
+unit:"mm",
+format:"a4",
+compress:true
+});
+
+
+const pageWidth =
+210;
+
+const pageHeight =
+297;
+
+
+/*
+الألوان
+*/
+
+const green = [
+8,116,67
+];
+
+const lightGreen = [
+241,248,244
+];
+
+const dark = [
+23,32,42
+];
+
+const gray = [
+100,116,139
+];
+
+const border = [
+214,226,220
+];
+
+
+/*
+الخلفية
+*/
+
+pdf.setFillColor(
+248,
+251,
+249
+);
+
+pdf.rect(
+0,
+0,
+pageWidth,
+pageHeight,
+"F"
+);
+
+
+/*
+البطاقة الرئيسية
+*/
+
+pdf.setFillColor(
+255,
+255,
+255
+);
+
+pdf.roundedRect(
+12,
+12,
+186,
+273,
+4,
+4,
+"F"
+);
+
+
+/*
+الإطار
+*/
+
+pdf.setDrawColor(
+...border
+);
+
+pdf.setLineWidth(
+0.5
+);
+
+pdf.roundedRect(
+12,
+12,
+186,
+273,
+4,
+4,
+"S"
+);
+
+
+/*
+الشريط العلوي
+*/
+
+pdf.setFillColor(
+...green
+);
+
+pdf.roundedRect(
+12,
+12,
+186,
+35,
+4,
+4,
+"F"
+);
+
+
+/*
+تغطية الجزء السفلي من الانحناء
+*/
+
+pdf.rect(
+12,
+31,
+186,
+16,
+"F"
+);
+
+
+/*
+عنوان الشركة
+*/
+
+pdf.setTextColor(
+255,
+255,
+255
+);
+
+pdf.setFont(
+"helvetica",
+"bold"
+);
+
+pdf.setFontSize(
+19
+);
+
+pdf.text(
+"شركة غسان القابضة",
+105,
+27,
+{
+align:"center"
+}
+);
+
+
+pdf.setFontSize(
+11
+);
+
+pdf.setFont(
+"helvetica",
+"normal"
+);
+
+pdf.text(
+"فاتورة إيجار",
+105,
+38,
+{
+align:"center"
+}
+);
+
+
+/*
+التاريخ
+*/
+
+pdf.setTextColor(
+...gray
+);
+
+pdf.setFontSize(
+9
+);
+
+pdf.text(
+"التاريخ: " + getToday(),
+105,
+55,
+{
+align:"center"
+}
+);
+
+
+/*
+بيانات الفاتورة
+*/
+
+let y =
+68;
+
+
+/*
+عنوان قسم البيانات
+*/
+
+pdf.setTextColor(
+...green
+);
+
+pdf.setFont(
+"helvetica",
+"bold"
+);
+
+pdf.setFontSize(
+12
+);
+
+pdf.text(
+"بيانات الفاتورة",
+190,
+y,
+{
+align:"right"
+}
+);
+
+
+y += 7;
+
+
+/*
+دالة رسم صف
+*/
+
+function drawPDFRow(
+label,
+value
+){
+
+const rowHeight =
+22;
+
+pdf.setFillColor(
+255,
+255,
+255
+);
+
+pdf.setDrawColor(
+...border
+);
+
+pdf.roundedRect(
+20,
+y,
+170,
+rowHeight,
+2,
+2,
+"FD"
+);
+
+
+/*
+الجهة اليمنى
+*/
+
+pdf.setFillColor(
+...lightGreen
+);
+
+pdf.rect(
+105,
+y,
+85,
+rowHeight,
+"F"
+);
+
+
+pdf.setTextColor(
+...gray
+);
+
+pdf.setFont(
+"helvetica",
+"bold"
+);
+
+pdf.setFontSize(
+9
+);
+
+pdf.text(
+label,
+183,
+y + 14,
+{
+align:"right"
+}
+);
+
+
+/*
+القيمة
+*/
+
+pdf.setTextColor(
+...dark
+);
+
+pdf.setFont(
+"helvetica",
+"normal"
+);
+
+pdf.setFontSize(
+10
+);
+
+let cleanValue =
+String(value || "-");
+
+
+if(cleanValue.length > 40){
+
+cleanValue =
+cleanValue.substring(
+0,
+40
+) + "...";
+
+}
+
+
+pdf.text(
+cleanValue,
+97,
+y + 14,
+{
+align:"right"
+}
+);
+
+
+y += rowHeight + 3;
+
+}
+
+
+/*
+الصفوف
+*/
+
+drawPDFRow(
+"نوع العقد",
+contractType.value
+);
+
+
+drawPDFRow(
+"رقم العقد",
+contractNumber.value || "-"
+);
+
+
+drawPDFRow(
+"اسم العميل",
+customerName.value.trim()
+);
+
+
+drawPDFRow(
+"مدة العقد",
+getDurationText()
+);
+
+
+/*
+قسم الرسوم
+*/
+
+y += 3;
+
+pdf.setTextColor(
+...green
+);
+
+pdf.setFont(
+"helvetica",
+"bold"
+);
+
+pdf.setFontSize(
+12
+);
+
+pdf.text(
+"تفاصيل الرسوم",
+190,
+y,
+{
+align:"right"
+}
+);
+
+
+y += 7;
+
+
+/*
+الحسابات
+*/
+
+const platform =
+calculatePlatform();
+
+const office =
+parseFloat(
+officeValue.value
+) || 0;
+
+const total =
+platform + office;
+
+
+drawPDFRow(
+"رسوم المنصة",
+formatNumber(platform) +
+" ريال"
+);
+
+
+drawPDFRow(
+"رسوم المكتب",
+formatNumber(office) +
+" ريال"
+);
+
+
+/*
+المجموع النهائي
+*/
+
+y += 4;
+
+pdf.setFillColor(
+...lightGreen
+);
+
+pdf.setDrawColor(
+...green
+);
+
+pdf.setLineWidth(
+0.8
+);
+
+pdf.roundedRect(
+20,
+y,
+170,
+32,
+3,
+3,
+"FD"
+);
+
+
+pdf.setTextColor(
+...green
+);
+
+pdf.setFont(
+"helvetica",
+"bold"
+);
+
+pdf.setFontSize(
+13
+);
+
+pdf.text(
+"المجموع النهائي",
+183,
+y + 20,
+{
+align:"right"
+}
+);
+
+
+pdf.setTextColor(
+22,
+163,
+74
+);
+
+pdf.setFontSize(
+17
+);
+
+pdf.text(
+formatNumber(total) +
+" ريال",
+97,
+y + 20,
+{
+align:"right"
+}
+);
+
+
+/*
+المعلومات أسفل الفاتورة
+*/
+
+y += 47;
+
+
+/*
+خط فاصل
+*/
+
+pdf.setDrawColor(
+...border
+);
+
+pdf.setLineWidth(
+0.4
+);
+
+pdf.line(
+25,
+y,
+185,
+y
+);
+
+
+y += 9;
+
+
+/*
+ملاحظة الرسوم
+*/
+
+pdf.setTextColor(
+...gray
+);
+
+pdf.setFont(
+"helvetica",
+"normal"
+);
+
+pdf.setFontSize(
+8
+);
+
+pdf.text(
+"السكني: 125 ريال لكل سنة أو جزء منها.",
+105,
+y,
+{
+align:"center"
+}
+);
+
+
+y += 6;
+
+pdf.text(
+"التجاري: أول سنة 200 ريال، وكل سنة إضافية أو جزء منها 400 ريال.",
+105,
+y,
+{
+align:"center"
+}
+);
+
+
+/*
+التذييل
+*/
+
+pdf.setTextColor(
+...green
+);
+
+pdf.setFont(
+"helvetica",
+"bold"
+);
+
+pdf.setFontSize(
+9
+);
+
+pdf.text(
+"شركة غسان القابضة",
+105,
+264,
+{
+align:"center"
+}
+);
+
+
+pdf.setTextColor(
+...gray
+);
+
+pdf.setFont(
+"helvetica",
+"normal"
+);
+
+pdf.setFontSize(
+7
+);
+
+pdf.text(
+"شكرًا لتعاملكم معنا",
+105,
+271,
+{
+align:"center"
+}
+);
+
+
+/*
+اسم الملف
+*/
+
+const fileName =
+getFileName() +
+".pdf";
+
+
+return {
+pdf,
+fileName
+};
+
+}
+
+
+/* ==========================
+   زر حفظ PDF
 ========================== */
 
 saveBtn.addEventListener(
@@ -1395,486 +2024,38 @@ receiptWrap.style.display =
 "block";
 
 
-/*
-التأكد من تحميل مكتبة PDF
-*/
-
 if(
 typeof window.jspdf ===
 "undefined"
 ){
 
-errorBox.textContent =
-"⚠️ لم يتم تحميل أداة إنشاء PDF. تأكد من اتصال الإنترنت ثم حاول مرة أخرى.";
-
-errorBox.style.display =
-"block";
+showError(
+"⚠️ تعذر تحميل أداة PDF. تأكد من اتصال الإنترنت ثم حاول مرة أخرى."
+);
 
 return;
 
 }
 
 
-const {
-jsPDF
-} =
-window.jspdf;
+try{
 
+const result =
+await createPDF();
 
-/*
-إنشاء ملف PDF
-*/
 
 const pdf =
-new jsPDF({
-orientation:"portrait",
-unit:"mm",
-format:"a4"
-});
-
-
-const pageWidth =
-210;
-
-
-/* خلفية */
-
-pdf.setFillColor(
-245,
-250,
-247
-);
-
-pdf.rect(
-0,
-0,
-210,
-297,
-"F"
-);
-
-
-/* الورقة */
-
-pdf.setFillColor(
-255,
-255,
-255
-);
-
-pdf.roundedRect(
-15,
-15,
-180,
-267,
-3,
-3,
-"F"
-);
-
-
-/* إطار */
-
-pdf.setDrawColor(
-220,
-232,
-225
-);
-
-pdf.setLineWidth(
-0.6
-);
-
-pdf.roundedRect(
-15,
-15,
-180,
-267,
-3,
-3,
-"S"
-);
-
-
-/*
-ملاحظة:
-النص العربي في jsPDF بدون خط عربي
-قد لا يظهر بشكل صحيح في بعض الأجهزة.
-لذلك يتم إنشاء محتوى PDF باستخدام
-صورة الفاتورة داخل PDF.
-*/
-
-
-/* إنشاء Canvas */
-
-const canvas =
-document.createElement(
-"canvas"
-);
-
-const ctx =
-canvas.getContext(
-"2d"
-);
-
-
-const width =
-1200;
-
-const height =
-1600;
-
-
-canvas.width =
-width;
-
-canvas.height =
-height;
-
-
-/* خلفية Canvas */
-
-ctx.fillStyle =
-"#f5faf7";
-
-ctx.fillRect(
-0,
-0,
-width,
-height
-);
-
-
-/* الورقة */
-
-ctx.fillStyle =
-"#ffffff";
-
-ctx.fillRect(
-70,
-60,
-1060,
-1480
-);
-
-
-/* إطار */
-
-ctx.strokeStyle =
-"#dce8e1";
-
-ctx.lineWidth =
-4;
-
-ctx.strokeRect(
-70,
-60,
-1060,
-1480
-);
-
-
-/* العنوان */
-
-ctx.direction =
-"rtl";
-
-ctx.textAlign =
-"center";
-
-ctx.fillStyle =
-"#087443";
-
-ctx.font =
-"bold 48px Arial";
-
-ctx.fillText(
-"شركة غسان القابضة",
-width / 2,
-145
-);
-
-
-ctx.fillStyle =
-"#17202a";
-
-ctx.font =
-"bold 32px Arial";
-
-ctx.fillText(
-"فاتورة إيجار",
-width / 2,
-195
-);
-
-
-/* التاريخ */
-
-ctx.fillStyle =
-"#64748b";
-
-ctx.font =
-"22px Arial";
-
-ctx.fillText(
-"التاريخ: " +
-getToday(),
-width / 2,
-235
-);
-
-
-/* الخط */
-
-ctx.strokeStyle =
-"#cbd5d1";
-
-ctx.lineWidth =
-2;
-
-ctx.setLineDash([
-10,
-10
-]);
-
-ctx.beginPath();
-
-ctx.moveTo(
-130,
-280
-);
-
-ctx.lineTo(
-1070,
-280
-);
-
-ctx.stroke();
-
-ctx.setLineDash([]);
-
-
-/* البيانات */
-
-let startY =
-350;
-
-const rightX =
-1010;
-
-const leftX =
-190;
-
-
-function drawRow(
-label,
-value
-){
-
-ctx.direction =
-"rtl";
-
-ctx.textAlign =
-"right";
-
-ctx.fillStyle =
-"#64748b";
-
-ctx.font =
-"24px Arial";
-
-ctx.fillText(
-label,
-rightX,
-startY
-);
-
-
-ctx.textAlign =
-"left";
-
-ctx.fillStyle =
-"#17202a";
-
-ctx.font =
-"bold 25px Arial";
-
-ctx.fillText(
-value,
-leftX,
-startY
-);
-
-
-startY += 100;
-
-}
-
-
-/* نوع العقد */
-
-drawRow(
-"نوع العقد",
-contractType.value
-);
-
-
-/* رقم العقد */
-
-drawRow(
-"رقم العقد",
-contractNumber.value || "-"
-);
-
-
-/* العميل */
-
-drawRow(
-"اسم العميل",
-customerName.value.trim()
-);
-
-
-/* المدة */
-
-drawRow(
-"مدة العقد",
-getDurationText()
-);
-
-
-/* الرسوم */
-
-const platform =
-calculatePlatform();
-
-const office =
-parseFloat(
-officeValue.value
-) || 0;
-
-const total =
-platform + office;
-
-
-drawRow(
-"رسوم المنصة",
-formatNumber(platform) +
-" ريال"
-);
-
-
-drawRow(
-"رسوم المكتب",
-formatNumber(office) +
-" ريال"
-);
-
-
-/* المجموع */
-
-ctx.fillStyle =
-"#f1f8f4";
-
-ctx.fillRect(
-130,
-startY - 45,
-940,
-100
-);
-
-
-ctx.direction =
-"rtl";
-
-ctx.textAlign =
-"right";
-
-ctx.fillStyle =
-"#087443";
-
-ctx.font =
-"bold 30px Arial";
-
-ctx.fillText(
-"المجموع",
-rightX - 20,
-startY + 15
-);
-
-
-ctx.textAlign =
-"left";
-
-ctx.fillStyle =
-"#16a34a";
-
-ctx.font =
-"bold 34px Arial";
-
-ctx.fillText(
-formatNumber(total) +
-" ريال",
-leftX + 20,
-startY + 15
-);
-
-
-/* أسفل */
-
-ctx.textAlign =
-"center";
-
-ctx.fillStyle =
-"#94a3b8";
-
-ctx.font =
-"20px Arial";
-
-ctx.fillText(
-"شكرًا لتعاملكم مع شركة غسان القابضة",
-width / 2,
-1460
-);
-
-
-/* تحويل Canvas إلى صورة */
-
-const imageData =
-canvas.toDataURL(
-"image/png",
-1.0
-);
-
-
-/*
-إضافة الصورة إلى PDF
-*/
-
-pdf.addImage(
-imageData,
-"PNG",
-0,
-0,
-210,
-210
-);
-
-
-/*
-اسم الملف = اسم العميل
-*/
+result.pdf;
 
 const fileName =
-getFileName() +
-".pdf";
+result.fileName;
 
 
 /*
 تحويل PDF إلى Blob
 */
 
-const pdfBlob =
+const blob =
 pdf.output(
 "blob"
 );
@@ -1886,7 +2067,7 @@ pdf.output(
 
 const file =
 new File(
-[pdfBlob],
+[blob],
 fileName,
 {
 type:"application/pdf"
@@ -1895,9 +2076,8 @@ type:"application/pdf"
 
 
 /*
-أولاً:
-مشاركة الملف على الآيفون
-والأندرويد إذا كانت مدعومة
+الآيفون والأندرويد:
+مشاركة الملف
 */
 
 if(
@@ -1928,11 +2108,6 @@ return;
 }
 catch(error){
 
-/*
-إذا المستخدم أغلق نافذة المشاركة
-لا نعتبرها مشكلة
-*/
-
 if(
 error.name ===
 "AbortError"
@@ -1948,13 +2123,12 @@ return;
 
 
 /*
-للأجهزة التي لا تدعم مشاركة الملفات:
-تنزيل PDF مباشرة
+الحفظ المباشر
 */
 
 const url =
 URL.createObjectURL(
-pdfBlob
+blob
 );
 
 
@@ -1963,26 +2137,20 @@ document.createElement(
 "a"
 );
 
-
 link.href =
 url;
-
 
 link.download =
 fileName;
 
-
 link.style.display =
 "none";
-
 
 document.body.appendChild(
 link
 );
 
-
 link.click();
-
 
 link.remove();
 
@@ -1997,6 +2165,18 @@ url
 },
 3000
 );
+
+
+}
+catch(error){
+
+console.error(error);
+
+showError(
+"⚠️ حدث خطأ أثناء إنشاء ملف PDF. حاول مرة أخرى."
+);
+
+}
 
 });
 
