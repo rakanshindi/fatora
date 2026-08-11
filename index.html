@@ -307,9 +307,16 @@ button:active { transform: scale(.98); }
 }
 
 /* ==================================================
-   تنسيقات الطباعة والتصدير لـ PDF (منع اللخبطة)
+   تنسيقات الطباعة (إلغاء الترويسة والتذييل ورابط الموقع)
 ================================================== */
+@page {
+    margin: 0; /* يلغي رابط الموقع والتاريخ الافتراضي من المتصفح */
+}
+
 @media print {
+    body {
+        background: #fff;
+    }
     body * {
         visibility: hidden;
     }
@@ -323,7 +330,7 @@ button:active { transform: scale(.98); }
         top: 0;
         width: 100%;
         margin: 0;
-        padding: 0;
+        padding: 40px 30px; /* هوامش للطباعة */
         border: none;
         box-shadow: none;
     }
@@ -589,7 +596,6 @@ previewBtn.addEventListener("click", function(){
     receiptWrap.scrollIntoView({ behavior: "smooth" });
 });
 
-/* طباعة وحفظ سليم ومباشر للـ PDF دون تشويه */
 saveBtn.addEventListener("click", function(){
     if(!validate()) return;
     updateReceipt();
