@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#087443">
 
-<title>فاتورة إيجار | شركة غسان القابضة</title>
+<title>فاتورة إنشاء عقد إيجار | شركة غسان القابضة</title>
 
 <!-- مكتبات تحويل الصفحة إلى صورة و PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -325,7 +325,7 @@ button:active { transform: scale(.98); }
 
         <div class="header">
             <h1 class="title">شركة غسان القابضة</h1>
-            <div class="subtitle">فاتورة إيجار</div>
+            <div class="subtitle">فاتورة إنشاء عقد إيجار</div>
         </div>
 
         <div class="form-grid">
@@ -411,7 +411,7 @@ button:active { transform: scale(.98); }
         <div class="receipt-wrap" id="receiptWrap">
             <div class="receipt-header">
                 <div class="receipt-company">شركة غسان القابضة</div>
-                <div class="receipt-title">فاتورة إيجار</div>
+                <div class="receipt-title">فاتورة إنشاء عقد إيجار</div>
                 <div class="receipt-date" id="receiptDate"></div>
             </div>
 
@@ -613,7 +613,7 @@ saveBtn.addEventListener("click", async function(){
         const xPos = (pdfWidth - imgWidth) / 2; // توسيط أفقي
         pdf.addImage(imgData, "JPEG", xPos, margin, imgWidth, imgHeight);
         
-        let filename = customerName.value.trim() ? "فاتورة - " + customerName.value.trim() + ".pdf" : "فاتورة-إيجار.pdf";
+        let filename = customerName.value.trim() ? "فاتورة - " + customerName.value.trim() + ".pdf" : "فاتورة-إنشاء-عقد-إيجار.pdf";
         pdf.save(filename);
     } catch (e) {
         alert("⚠️ حدث خطأ أثناء الحفظ، يرجى المحاولة مرة أخرى.");
