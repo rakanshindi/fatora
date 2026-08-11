@@ -9,6 +9,10 @@
 
 <title>فاتورة إيجار | شركة غسان القابضة</title>
 
+<!-- مكتبات تحويل الصفحة إلى صورة و PDF لمنع ظهور تذييل المتصفح نهائياً -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
 
 /* ==========================
@@ -307,15 +311,17 @@ button:active { transform: scale(.98); }
 }
 
 /* ==================================================
-   تنسيقات الطباعة (إلغاء الترويسة والتذييل ورابط الموقع)
+   منع ظهور الرابط والتاريخ نهائياً بالطباعة
 ================================================== */
 @page {
-    margin: 0; /* يلغي رابط الموقع والتاريخ الافتراضي من المتصفح */
+    margin: 0px !important;
 }
 
 @media print {
-    body {
-        background: #fff;
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
     }
     body * {
         visibility: hidden;
@@ -330,7 +336,7 @@ button:active { transform: scale(.98); }
         top: 0;
         width: 100%;
         margin: 0;
-        padding: 40px 30px; /* هوامش للطباعة */
+        padding: 25px 20px !important;
         border: none;
         box-shadow: none;
     }
@@ -596,11 +602,41 @@ previewBtn.addEventListener("click", function(){
     receiptWrap.scrollIntoView({ behavior: "smooth" });
 });
 
-saveBtn.addEventListener("click", function(){
+/* حفظ PDF نقي دون الاستعانة بـ print المتصفح المسبب لروابط الصفحة */
+saveBtn.addEventListener("click", async function(){
     if(!validate()) return;
     updateReceipt();
     receiptWrap.style.display = "block";
-    window.print();
+
+    const btnText = saveBtn.textContent;
+    saveBtn.textContent = "جاري الحفظ...";
+    saveBtn.disabled = true;
+
+    try {
+        const canvas = await html2canvas(receiptWrap, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: "#ffffff"
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.98);
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const imgWidth = pdfWidth - 20; 
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        pdf.addImage(imgData, "JPEG", 10, 10, imgWidth, imgHeight);
+        
+        let filename = customerName.value.trim() ? "فاتورة - " + customerName.value.trim() + ".pdf" : "فاتورة-إيجار.pdf";
+        pdf.save(filename);
+    } catch (e) {
+        window.print();
+    }
+
+    saveBtn.textContent = btnText;
+    saveBtn.disabled = false;
 });
 
 </script>
