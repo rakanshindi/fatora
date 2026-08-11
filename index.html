@@ -4,13 +4,10 @@
 <head>
 
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#087443">
 
 <title>فاتورة إيجار | شركة غسان القابضة</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 
@@ -19,2043 +16,587 @@
 ========================== */
 
 *{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
-html,
-body{
-    margin:0;
-    padding:0;
-    width:100%;
-    min-height:100%;
-    background:#eef5f1;
-    color:#17202a;
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Tahoma,
-        Arial,
-        sans-serif;
-    overflow-x:hidden;
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: #eef5f1;
+    color: #17202a;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, Arial, sans-serif;
 }
 
-body{
-    touch-action:manipulation;
+.wrap {
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 12px;
 }
 
-button,
-input,
-select{
-    touch-action:manipulation;
+.card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 5px 25px rgba(0,0,0,.08);
 }
-
-.wrap{
-    max-width:700px;
-    margin:0 auto;
-    padding:12px;
-}
-
-.card{
-    background:#fff;
-    border-radius:16px;
-    padding:18px;
-    box-shadow:0 5px 25px rgba(0,0,0,.08);
-}
-
 
 /* ==========================
    الرأس
 ========================== */
 
-.header{
-    text-align:center;
-    margin-bottom:16px;
+.header {
+    text-align: center;
+    margin-bottom: 16px;
 }
 
-.title{
-    margin:0;
-    font-size:22px;
-    font-weight:900;
-    color:#087443;
+.title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 900;
+    color: #087443;
 }
 
-.subtitle{
-    margin-top:5px;
-    font-size:13px;
-    font-weight:700;
-    color:#64748b;
+.subtitle {
+    margin-top: 5px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
 }
-
 
 /* ==========================
    الحقول
 ========================== */
 
-.form-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
-.field{
-    min-width:0;
+.field {
+    min-width: 0;
 }
 
-.full{
-    grid-column:1/-1;
+.full {
+    grid-column: 1 / -1;
 }
 
-label{
-    display:block;
-    font-size:12px;
-    font-weight:800;
-    margin-bottom:5px;
+label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 5px;
 }
 
-.req{
-    color:#dc2626;
+.req {
+    color: #dc2626;
 }
 
-input,
-select{
-    width:100%;
-    height:42px;
-    padding:0 10px;
-    border:1px solid #d5dce0;
-    border-radius:8px;
-    background:#fff;
-    color:#17202a;
-    outline:none;
-    font-family:inherit;
-    font-size:16px;
-    -webkit-appearance:none;
-    appearance:none;
+input, select {
+    width: 100%;
+    height: 42px;
+    padding: 0 10px;
+    border: 1px solid #d5dce0;
+    border-radius: 8px;
+    background: #fff;
+    color: #17202a;
+    outline: none;
+    font-family: inherit;
+    font-size: 16px;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
-input:focus,
-select:focus{
-    border-color:#087443;
-    box-shadow:0 0 0 2px #d8eee2;
+input:focus, select:focus {
+    border-color: #087443;
+    box-shadow: 0 0 0 2px #d8eee2;
 }
 
-
-/* ==========================
-   مدة العقد
-========================== */
-
-.duration-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:8px;
+.duration-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
 }
 
-.duration-item label{
-    text-align:center;
+.duration-item label {
+    text-align: center;
 }
 
-.duration-item select{
-    text-align:center;
-    font-weight:800;
+.duration-item select {
+    text-align: center;
+    font-weight: 800;
 }
 
-
-/* ==========================
-   القيم
-========================== */
-
-.total-input{
-    background:#f8fbf9;
-    font-weight:900;
-    color:#16a34a;
-    text-align:center;
+.total-input {
+    background: #f8fbf9;
+    font-weight: 900;
+    color: #16a34a;
+    text-align: center;
 }
 
-
-/* ==========================
-   الملاحظة
-========================== */
-
-.note{
-    font-size:10px;
-    line-height:1.7;
-    color:#64748b;
-    background:#f8fbf9;
-    border:1px solid #e0ebe5;
-    border-radius:8px;
-    padding:8px;
-    text-align:center;
+.note {
+    font-size: 11px;
+    line-height: 1.6;
+    color: #64748b;
+    background: #f8fbf9;
+    border: 1px solid #e0ebe5;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
 }
-
 
 /* ==========================
    الأزرار
 ========================== */
 
-.buttons{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-top:14px;
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
 }
 
-button{
-    height:43px;
-    border:0;
-    border-radius:9px;
-    font-family:inherit;
-    font-size:14px;
-    font-weight:900;
-    cursor:pointer;
-    color:#fff;
+button {
+    height: 44px;
+    border: 0;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    color: #fff;
 }
 
-.preview-btn{
-    background:#475569;
-}
+.preview-btn { background: #475569; }
+.save-btn { background: #087443; }
 
-.save-btn{
-    background:#087443;
-}
+button:active { transform: scale(.98); }
 
-button:active{
-    transform:scale(.98);
-}
-
-button:disabled{
-    opacity:.7;
-    cursor:wait;
-}
-
-
-/* ==========================
-   الخطأ
-========================== */
-
-.error{
-    display:none;
-    margin-top:10px;
-    padding:9px;
-    background:#fff1f2;
-    border:1px solid #fecdd3;
-    border-radius:8px;
-    color:#9f1239;
-    font-size:11px;
-    font-weight:800;
-    text-align:center;
-}
-
-
-/* ==================================================
-   منطقة المعاينة (الإصلاح الشامل للعرض)
-================================================== */
-
-.receipt-wrap{
-    display:none;
-    margin-top:20px;
-    width:100%;
-    overflow:hidden;
-    position:relative;
-}
-
-.receipt-scaler {
-    width: 794px;
-    transform-origin: 0 0;
+.error {
+    display: none;
+    margin-top: 10px;
+    padding: 9px;
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: 8px;
+    color: #9f1239;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: center;
 }
 
 /* ==================================================
-   الفاتورة نفسها (مقاس A4)
+   منطقة المعاينة (تصميم متجاوب ومتناسق)
 ================================================== */
 
-.receipt{
-    width:794px;
-    height:1123px;
-    min-height:1123px;
-    background:#fff;
-    padding:55px 55px 45px;
-    color:#17202a;
-    font-family:
-        Tahoma,
-        Arial,
-        "Segoe UI",
-        sans-serif;
-    direction:rtl;
-    position:relative;
-    box-sizing: border-box;
+.receipt-wrap {
+    display: none;
+    margin-top: 25px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-
-/* ==========================
-   رأس الفاتورة
-========================== */
-
-.receipt-header{
-    background:#087443;
-    border-radius:18px;
-    padding:30px 25px 25px;
-    text-align:center;
-    color:#fff;
+.receipt-header {
+    background: #087443;
+    border-radius: 12px;
+    padding: 20px 15px;
+    text-align: center;
+    color: #fff;
 }
 
-.receipt-company{
-    font-size:34px;
-    font-weight:900;
-    line-height:1.4;
+.receipt-company {
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 4px;
 }
 
-.receipt-title{
-    font-size:22px;
-    font-weight:800;
-    margin-top:8px;
+.receipt-title {
+    font-size: 16px;
+    font-weight: 700;
 }
 
-.receipt-date{
-    font-size:15px;
-    margin-top:12px;
-    opacity:.95;
+.receipt-date {
+    font-size: 13px;
+    margin-top: 8px;
+    opacity: .9;
 }
 
-
-/* ==========================
-   عناوين الأقسام
-========================== */
-
-.receipt-section-title{
-    font-size:20px;
-    font-weight:900;
-    color:#087443;
-    margin-top:35px;
-    margin-bottom:14px;
-    padding-bottom:9px;
-    border-bottom:2px solid #dce8e1;
+.receipt-section-title {
+    font-size: 16px;
+    font-weight: 900;
+    color: #087443;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #dce8e1;
 }
 
-
-/* ==========================
-   جدول البيانات
-========================== */
-
-.receipt-table{
-    border:2px solid #dce8e1;
-    border-radius:12px;
-    overflow:hidden;
+.receipt-table, .fees-table {
+    border: 1px solid #dce8e1;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-.receipt-row{
-    display:grid;
-    grid-template-columns:40% 60%;
-    min-height:65px;
-    border-bottom:1px solid #dce8e1;
+.receipt-row, .fee-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid #dce8e1;
+    font-size: 14px;
 }
 
-.receipt-row:last-child{
-    border-bottom:0;
+.receipt-row:last-child, .fee-row:last-child {
+    border-bottom: 0;
 }
 
-.receipt-label{
-    display:flex;
-    align-items:center;
-    padding:12px 18px;
-    background:#f1f8f4;
-    font-size:15px;
-    font-weight:900;
-    color:#64748b;
+.receipt-label, .fee-label {
+    font-weight: 800;
+    color: #64748b;
 }
 
-.receipt-value{
-    display:flex;
-    align-items:center;
-    padding:12px 18px;
-    font-size:17px;
-    font-weight:800;
-    color:#17202a;
-    word-break:break-word;
+.receipt-value, .fee-value {
+    font-weight: 900;
+    color: #17202a;
+    text-align: left;
 }
 
-
-/* ==========================
-   قسم الرسوم
-========================== */
-
-.fees-table{
-    margin-top:0;
-    border:2px solid #dce8e1;
-    border-radius:12px;
-    overflow:hidden;
+.fee-value {
+    color: #087443;
 }
 
-.fee-row{
-    display:grid;
-    grid-template-columns:50% 50%;
-    min-height:68px;
-    border-bottom:1px solid #dce8e1;
+.receipt-total {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f1f8f4;
+    border: 2px solid #087443;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.fee-row:last-child{
-    border-bottom:0;
+.receipt-total-label {
+    font-size: 16px;
+    font-weight: 900;
+    color: #087443;
 }
 
-.fee-label{
-    display:flex;
-    align-items:center;
-    padding:12px 18px;
-    background:#f8fbf9;
-    font-size:16px;
-    font-weight:900;
+.receipt-total-value {
+    font-size: 20px;
+    font-weight: 900;
+    color: #16a34a;
 }
 
-.fee-value{
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    padding:12px 18px;
-    font-size:18px;
-    font-weight:900;
-    color:#087443;
+.receipt-footer {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 12px;
+    border-top: 1px dashed #cbd5d1;
+    font-size: 12px;
+    color: #94a3b8;
 }
 
-
-/* ==========================
-   المجموع
-========================== */
-
-.receipt-total{
-    margin-top:25px;
-    padding:22px 25px;
-    background:#f1f8f4;
-    border:3px solid #087443;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:20px;
+.receipt-footer strong {
+    color: #087443;
 }
 
-.receipt-total-label{
-    font-size:21px;
-    font-weight:900;
-    color:#087443;
-}
-
-.receipt-total-value{
-    font-size:27px;
-    font-weight:900;
-    color:#16a34a;
-    white-space:nowrap;
-}
-
-
-/* ==========================
-   أسفل الفاتورة
-========================== */
-
-.receipt-footer{
-    position:absolute;
-    bottom:38px;
-    left:55px;
-    right:55px;
-    text-align:center;
-    padding-top:18px;
-    border-top:1px dashed #cbd5d1;
-    font-size:13px;
-    line-height:1.8;
-    color:#94a3b8;
-}
-
-.receipt-footer strong{
-    color:#087443;
-    font-size:15px;
-}
-
-
-/* ==========================
-   الجوال
-========================== */
-
-@media(max-width:600px){
-
-    .wrap{
-        padding:7px;
+/* ==================================================
+   تنسيقات الطباعة والتصدير لـ PDF (منع اللخبطة)
+================================================== */
+@media print {
+    body * {
+        visibility: hidden;
     }
-
-    .card{
-        padding:13px;
-        border-radius:12px;
+    .receipt-wrap, .receipt-wrap * {
+        visibility: visible;
     }
-
-    .title{
-        font-size:19px;
+    .receipt-wrap {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border: none;
+        box-shadow: none;
     }
-
-    .form-grid{
-        grid-template-columns:1fr;
-        gap:9px;
-    }
-
-    .full{
-        grid-column:auto;
-    }
-
-    .duration-grid{
-        gap:5px;
-    }
-
-    .buttons{
-        grid-template-columns:1fr 1fr;
-    }
-
 }
 
-
-/* ==========================
-   الشاشات الصغيرة
-========================== */
-
-@media(max-width:380px){
-
-    .buttons{
-        grid-template-columns:1fr;
-    }
-
-}
-
-
-/* ==========================
-   منع تحديد النص أثناء الضغط
-========================== */
-
-button{
-    user-select:none;
-    -webkit-user-select:none;
+@media(max-width: 480px){
+    .form-grid { grid-template-columns: 1fr; }
+    .full { grid-column: auto; }
 }
 
 </style>
-
 </head>
-
 
 <body>
 
-
 <div class="wrap">
+    <div class="card">
 
-<div class="card">
+        <div class="header">
+            <h1 class="title">شركة غسان القابضة</h1>
+            <div class="subtitle">فاتورة إيجار</div>
+        </div>
 
+        <div class="form-grid">
 
-<!-- ==========================
-     العنوان
-========================== -->
+            <div class="field full">
+                <label>نوع العقد <span class="req">*</span></label>
+                <select id="contractType">
+                    <option value="">اختر نوع العقد</option>
+                    <option value="سكني">سكني</option>
+                    <option value="تجاري">تجاري</option>
+                </select>
+            </div>
 
-<div class="header">
+            <div class="field full">
+                <label>رقم العقد</label>
+                <input id="contractNumber" type="text" inputmode="numeric" maxlength="11" placeholder="اختياري - 11 رقم" autocomplete="off">
+            </div>
 
-<h1 class="title">
-شركة غسان القابضة
-</h1>
+            <div class="field full">
+                <label>اسم العميل <span class="req">*</span></label>
+                <input id="customerName" type="text" placeholder="اكتب اسم العميل" autocomplete="name">
+            </div>
 
-<div class="subtitle">
-فاتورة إيجار
+            <div class="field full">
+                <label>مدة العقد <span class="req">*</span></label>
+                <div class="duration-grid">
+                    <div class="duration-item">
+                        <label>سنة</label>
+                        <select id="durationYears">
+                            <option value="0" selected>0</option>
+                            <script>for(let i=1;i<=50;i++) document.write(`<option value="${i}">${i}</option>`);</script>
+                        </select>
+                    </div>
+                    <div class="duration-item">
+                        <label>شهر</label>
+                        <select id="durationMonths">
+                            <option value="0" selected>0</option>
+                            <script>for(let i=1;i<=11;i++) document.write(`<option value="${i}">${i}</option>`);</script>
+                        </select>
+                    </div>
+                    <div class="duration-item">
+                        <label>يوم</label>
+                        <select id="durationDays">
+                            <option value="0" selected>0</option>
+                            <script>for(let i=1;i<=30;i++) document.write(`<option value="${i}">${i}</option>`);</script>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>رسوم المنصة</label>
+                <input id="platformValue" class="total-input" readonly value="0 ريال">
+            </div>
+
+            <div class="field">
+                <label>رسوم المكتب <span class="req">*</span></label>
+                <input id="officeValue" type="number" min="0" inputmode="decimal" placeholder="0">
+            </div>
+
+            <div class="field full">
+                <label>المجموع</label>
+                <input id="totalValue" class="total-input" readonly value="0 ريال">
+            </div>
+
+            <div class="field full">
+                <div class="note">
+                    السكني: 125 ريال لكل سنة أو جزء منها.<br>
+                    التجاري: أول سنة 200 ريال، وكل سنة إضافية أو جزء منها 400 ريال.
+                </div>
+            </div>
+
+        </div>
+
+        <div id="error" class="error"></div>
+
+        <div class="buttons">
+            <button type="button" class="preview-btn" id="previewBtn">معاينة الفاتورة</button>
+            <button type="button" class="save-btn" id="saveBtn">حفظ PDF</button>
+        </div>
+
+        <!-- المعاينة -->
+        <div class="receipt-wrap" id="receiptWrap">
+            <div class="receipt-header">
+                <div class="receipt-company">شركة غسان القابضة</div>
+                <div class="receipt-title">فاتورة إيجار</div>
+                <div class="receipt-date" id="receiptDate"></div>
+            </div>
+
+            <div class="receipt-section-title">بيانات الفاتورة</div>
+            <div class="receipt-table">
+                <div class="receipt-row">
+                    <div class="receipt-label">نوع العقد</div>
+                    <div class="receipt-value" id="rContractType">-</div>
+                </div>
+                <div class="receipt-row">
+                    <div class="receipt-label">رقم العقد</div>
+                    <div class="receipt-value" id="rContractNumber">-</div>
+                </div>
+                <div class="receipt-row">
+                    <div class="receipt-label">اسم العميل</div>
+                    <div class="receipt-value" id="rCustomer">-</div>
+                </div>
+                <div class="receipt-row">
+                    <div class="receipt-label">مدة العقد</div>
+                    <div class="receipt-value" id="rDuration">0 سنة / 0 شهر / 0 يوم</div>
+                </div>
+            </div>
+
+            <div class="receipt-section-title">تفاصيل الرسوم</div>
+            <div class="fees-table">
+                <div class="fee-row">
+                    <div class="fee-label">رسوم المنصة</div>
+                    <div class="fee-value" id="rPlatform">0 ريال</div>
+                </div>
+                <div class="fee-row">
+                    <div class="fee-label">رسوم المكتب</div>
+                    <div class="fee-value" id="rOffice">0 ريال</div>
+                </div>
+            </div>
+
+            <div class="receipt-total">
+                <div class="receipt-total-label">المجموع النهائي</div>
+                <div class="receipt-total-value" id="rTotal">0 ريال</div>
+            </div>
+
+            <div class="receipt-footer">
+                <strong>شركة غسان القابضة</strong><br>
+                شكرًا لتعاملكم معنا
+            </div>
+        </div>
+
+    </div>
 </div>
-
-</div>
-
-
-<!-- ==========================
-     النموذج
-========================== -->
-
-<div class="form-grid">
-
-
-<!-- نوع العقد -->
-
-<div class="field full">
-
-<label>
-نوع العقد
-<span class="req">*</span>
-</label>
-
-<select id="contractType">
-
-<option value="">
-اختر نوع العقد
-</option>
-
-<option value="سكني">
-سكني
-</option>
-
-<option value="تجاري">
-تجاري
-</option>
-
-</select>
-
-</div>
-
-
-<!-- رقم العقد -->
-
-<div class="field full">
-
-<label>
-رقم العقد
-</label>
-
-<input
-id="contractNumber"
-type="text"
-inputmode="numeric"
-maxlength="11"
-placeholder="اختياري - 11 رقم"
-autocomplete="off"
->
-
-</div>
-
-
-<!-- اسم العميل -->
-
-<div class="field full">
-
-<label>
-اسم العميل
-<span class="req">*</span>
-</label>
-
-<input
-id="customerName"
-type="text"
-placeholder="اكتب اسم العميل"
-autocomplete="name"
->
-
-</div>
-
-
-<!-- مدة العقد -->
-
-<div class="field full">
-
-<label>
-مدة العقد
-<span class="req">*</span>
-</label>
-
-<div class="duration-grid">
-
-
-<div class="duration-item">
-
-<label>
-سنة
-</label>
-
-<select id="durationYears">
-
-<option value="0" selected>0</option>
 
 <script>
 
-for(let i=1;i<=50;i++){
-
-    document.write(
-        `<option value="${i}">${i}</option>`
-    );
-
-}
-
-</script>
-
-</select>
-
-</div>
-
-
-<div class="duration-item">
-
-<label>
-شهر
-</label>
-
-<select id="durationMonths">
-
-<option value="0" selected>0</option>
-
-<script>
-
-for(let i=1;i<=11;i++){
-
-    document.write(
-        `<option value="${i}">${i}</option>`
-    );
-
-}
-
-</script>
-
-</select>
-
-</div>
-
-
-<div class="duration-item">
-
-<label>
-يوم
-</label>
-
-<select id="durationDays">
-
-<option value="0" selected>0</option>
-
-<script>
-
-for(let i=1;i<=30;i++){
-
-    document.write(
-        `<option value="${i}">${i}</option>`
-    );
-
-}
-
-</script>
-
-</select>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-<!-- رسوم المنصة -->
-
-<div class="field">
-
-<label>
-رسوم المنصة
-</label>
-
-<input
-id="platformValue"
-class="total-input"
-readonly
-value="0 ريال"
->
-
-</div>
-
-
-<!-- رسوم المكتب -->
-
-<div class="field">
-
-<label>
-رسوم المكتب
-<span class="req">*</span>
-</label>
-
-<input
-id="officeValue"
-type="number"
-min="0"
-inputmode="decimal"
-placeholder="0"
->
-
-</div>
-
-
-<!-- المجموع -->
-
-<div class="field full">
-
-<label>
-المجموع
-</label>
-
-<input
-id="totalValue"
-class="total-input"
-readonly
-value="0 ريال"
->
-
-</div>
-
-
-<!-- ملاحظة -->
-
-<div class="field full">
-
-<div class="note">
-
-السكني: 125 ريال لكل سنة أو جزء منها.
-<br>
-
-التجاري: أول سنة 200 ريال، وكل سنة إضافية أو جزء منها 400 ريال.
-
-</div>
-
-</div>
-
-
-</div>
-
-
-<!-- رسالة الخطأ -->
-
-<div id="error" class="error"></div>
-
-
-<!-- الأزرار -->
-
-<div class="buttons">
-
-<button
-type="button"
-class="preview-btn"
-id="previewBtn"
->
-معاينة الفاتورة
-</button>
-
-<button
-type="button"
-class="save-btn"
-id="saveBtn"
->
-حفظ PDF
-</button>
-
-</div>
-
-
-<!-- ==================================================
-     الفاتورة
-================================================== -->
-
-<div
-class="receipt-wrap"
-id="receiptWrap"
->
-
-<div class="receipt-scaler" id="receiptScaler">
-
-<div
-class="receipt"
-id="receipt"
->
-
-
-<!-- رأس الفاتورة -->
-
-<div class="receipt-header">
-
-<div class="receipt-company">
-شركة غسان القابضة
-</div>
-
-<div class="receipt-title">
-فاتورة إيجار
-</div>
-
-<div
-class="receipt-date"
-id="receiptDate"
->
-</div>
-
-</div>
-
-
-<!-- بيانات الفاتورة -->
-
-<div class="receipt-section-title">
-بيانات الفاتورة
-</div>
-
-
-<div class="receipt-table">
-
-
-<div class="receipt-row">
-
-<div class="receipt-label">
-نوع العقد
-</div>
-
-<div
-class="receipt-value"
-id="rContractType"
->
--
-</div>
-
-</div>
-
-
-<div class="receipt-row">
-
-<div class="receipt-label">
-رقم العقد
-</div>
-
-<div
-class="receipt-value"
-id="rContractNumber"
->
--
-</div>
-
-</div>
-
-
-<div class="receipt-row">
-
-<div class="receipt-label">
-اسم العميل
-</div>
-
-<div
-class="receipt-value"
-id="rCustomer"
->
--
-</div>
-
-</div>
-
-
-<div class="receipt-row">
-
-<div class="receipt-label">
-مدة العقد
-</div>
-
-<div
-class="receipt-value"
-id="rDuration"
->
-0 سنة / 0 شهر / 0 يوم
-</div>
-
-</div>
-
-
-</div>
-
-
-<!-- الرسوم -->
-
-<div class="receipt-section-title">
-تفاصيل الرسوم
-</div>
-
-
-<div class="fees-table">
-
-
-<div class="fee-row">
-
-<div class="fee-label">
-رسوم المنصة
-</div>
-
-<div
-class="fee-value"
-id="rPlatform"
->
-0 ريال
-</div>
-
-</div>
-
-
-<div class="fee-row">
-
-<div class="fee-label">
-رسوم المكتب
-</div>
-
-<div
-class="fee-value"
-id="rOffice"
->
-0 ريال
-</div>
-
-</div>
-
-
-</div>
-
-
-<!-- المجموع -->
-
-<div class="receipt-total">
-
-<div class="receipt-total-label">
-المجموع النهائي
-</div>
-
-<div
-class="receipt-total-value"
-id="rTotal"
->
-0 ريال
-</div>
-
-</div>
-
-
-<!-- التذييل -->
-
-<div class="receipt-footer">
-
-<strong>
-شركة غسان القابضة
-</strong>
-
-<br>
-
-شكرًا لتعاملكم معنا
-
-</div>
-
-
-</div>
-
-</div>
-
-</div>
-
-
-</div>
-
-</div>
-
-
-<script>
-
-
-/* ==================================================
-   العناصر
-================================================== */
-
-const contractType =
-document.getElementById("contractType");
-
-const contractNumber =
-document.getElementById("contractNumber");
-
-const customerName =
-document.getElementById("customerName");
-
-const durationYears =
-document.getElementById("durationYears");
-
-const durationMonths =
-document.getElementById("durationMonths");
-
-const durationDays =
-document.getElementById("durationDays");
-
-const platformValue =
-document.getElementById("platformValue");
-
-const officeValue =
-document.getElementById("officeValue");
-
-const totalValue =
-document.getElementById("totalValue");
-
-const errorBox =
-document.getElementById("error");
-
-const previewBtn =
-document.getElementById("previewBtn");
-
-const saveBtn =
-document.getElementById("saveBtn");
-
-const receiptWrap =
-document.getElementById("receiptWrap");
-
-const receiptScaler =
-document.getElementById("receiptScaler");
-
-const receipt =
-document.getElementById("receipt");
-
-
-/* ==================================================
-   منع أي حروف في رقم العقد
-================================================== */
-
-contractNumber.addEventListener(
-"input",
-function(){
-
-    this.value =
-        this.value
-        .replace(/\D/g,"")
-        .slice(0,11);
-
-}
-);
-
-
-/* ==================================================
-   الحصول على مدة العقد
-================================================== */
+const contractType = document.getElementById("contractType");
+const contractNumber = document.getElementById("contractNumber");
+const customerName = document.getElementById("customerName");
+const durationYears = document.getElementById("durationYears");
+const durationMonths = document.getElementById("durationMonths");
+const durationDays = document.getElementById("durationDays");
+const platformValue = document.getElementById("platformValue");
+const officeValue = document.getElementById("officeValue");
+const totalValue = document.getElementById("totalValue");
+const errorBox = document.getElementById("error");
+const previewBtn = document.getElementById("previewBtn");
+const saveBtn = document.getElementById("saveBtn");
+const receiptWrap = document.getElementById("receiptWrap");
+
+contractNumber.addEventListener("input", function(){
+    this.value = this.value.replace(/\D/g,"").slice(0,11);
+});
 
 function getDuration(){
-
     return {
-
-        years:
-            parseInt(durationYears.value,10) || 0,
-
-        months:
-            parseInt(durationMonths.value,10) || 0,
-
-        days:
-            parseInt(durationDays.value,10) || 0
-
+        years: parseInt(durationYears.value,10) || 0,
+        months: parseInt(durationMonths.value,10) || 0,
+        days: parseInt(durationDays.value,10) || 0
     };
-
 }
-
-
-/* ==================================================
-   حساب السنوات المحتسبة للرسوم
-================================================== */
 
 function getBillableYears(){
-
-    const d =
-        getDuration();
-
-    let years =
-        d.years;
-
-    if(
-        d.months > 0 ||
-        d.days > 0
-    ){
-
-        years++;
-
-    }
-
+    const d = getDuration();
+    let years = d.years;
+    if(d.months > 0 || d.days > 0){ years++; }
     return years;
-
 }
-
-
-/* ==================================================
-   حساب رسوم المنصة
-================================================== */
 
 function calculatePlatform(){
+    const type = contractType.value;
+    const d = getDuration();
+    if(!type || (d.years === 0 && d.months === 0 && d.days === 0)) return 0;
 
-    const type =
-        contractType.value;
-
-    const d =
-        getDuration();
-
-
-    if(!type){
-
-        return 0;
-
-    }
-
-
-    if(
-        d.years === 0 &&
-        d.months === 0 &&
-        d.days === 0
-    ){
-
-        return 0;
-
-    }
-
-
-    const years =
-        getBillableYears();
-
-
-    if(type === "سكني"){
-
-        return years * 125;
-
-    }
-
-
-    if(type === "تجاري"){
-
-        if(years <= 1){
-
-            return 200;
-
-        }
-
-        return 200 +
-            (
-                (years - 1) * 400
-            );
-
-    }
-
-
+    const years = getBillableYears();
+    if(type === "سكني") return years * 125;
+    if(type === "تجاري") return years <= 1 ? 200 : 200 + ((years - 1) * 400);
     return 0;
-
 }
-
-
-/* ==================================================
-   تنسيق الأرقام
-================================================== */
 
 function formatNumber(value){
-
-    return Number(value)
-        .toLocaleString("en-US");
-
+    return Number(value).toLocaleString("en-US");
 }
-
-
-/* ==================================================
-   تحديث المجموع
-================================================== */
 
 function updateTotal(){
+    const platform = calculatePlatform();
+    const office = parseFloat(officeValue.value) || 0;
+    const total = platform + office;
 
-    const platform =
-        calculatePlatform();
-
-    const office =
-        parseFloat(
-            officeValue.value
-        ) || 0;
-
-    const total =
-        platform + office;
-
-
-    platformValue.value =
-        formatNumber(platform) +
-        " ريال";
-
-
-    totalValue.value =
-        formatNumber(total) +
-        " ريال";
-
+    platformValue.value = formatNumber(platform) + " ريال";
+    totalValue.value = formatNumber(total) + " ريال";
 }
-
-
-/* ==================================================
-   نص مدة العقد
-================================================== */
-
-function getDurationText(){
-
-    const d =
-        getDuration();
-
-    return (
-        d.years +
-        " سنة / " +
-        d.months +
-        " شهر / " +
-        d.days +
-        " يوم"
-    );
-
-}
-
-
-/* ==================================================
-   التاريخ الميلادي
-================================================== */
 
 function getToday(){
-
-    const now =
-        new Date();
-
-    const day =
-        String(
-            now.getDate()
-        ).padStart(2,"0");
-
-    const month =
-        String(
-            now.getMonth() + 1
-        ).padStart(2,"0");
-
-    const year =
-        now.getFullYear();
-
-    return (
-        day +
-        " / " +
-        month +
-        " / " +
-        year
-    );
-
+    const now = new Date();
+    return String(now.getDate()).padStart(2,"0") + " / " + String(now.getMonth() + 1).padStart(2,"0") + " / " + now.getFullYear();
 }
-
-
-/* ==================================================
-   تحديث بيانات الفاتورة
-================================================== */
 
 function updateReceipt(){
+    const platform = calculatePlatform();
+    const office = parseFloat(officeValue.value) || 0;
+    const total = platform + office;
+    const d = getDuration();
 
-    const platform =
-        calculatePlatform();
-
-    const office =
-        parseFloat(
-            officeValue.value
-        ) || 0;
-
-    const total =
-        platform + office;
-
-
-    document.getElementById(
-        "rContractType"
-    ).textContent =
-        contractType.value || "-";
-
-
-    document.getElementById(
-        "rContractNumber"
-    ).textContent =
-        contractNumber.value || "-";
-
-
-    document.getElementById(
-        "rCustomer"
-    ).textContent =
-        customerName.value.trim() || "-";
-
-
-    document.getElementById(
-        "rDuration"
-    ).textContent =
-        getDurationText();
-
-
-    document.getElementById(
-        "rPlatform"
-    ).textContent =
-        formatNumber(platform) +
-        " ريال";
-
-
-    document.getElementById(
-        "rOffice"
-    ).textContent =
-        formatNumber(office) +
-        " ريال";
-
-
-    document.getElementById(
-        "rTotal"
-    ).textContent =
-        formatNumber(total) +
-        " ريال";
-
-
-    document.getElementById(
-        "receiptDate"
-    ).textContent =
-        "التاريخ: " +
-        getToday();
-
+    document.getElementById("rContractType").textContent = contractType.value || "-";
+    document.getElementById("rContractNumber").textContent = contractNumber.value || "-";
+    document.getElementById("rCustomer").textContent = customerName.value.trim() || "-";
+    document.getElementById("rDuration").textContent = d.years + " سنة / " + d.months + " شهر / " + d.days + " يوم";
+    document.getElementById("rPlatform").textContent = formatNumber(platform) + " ريال";
+    document.getElementById("rOffice").textContent = formatNumber(office) + " ريال";
+    document.getElementById("rTotal").textContent = formatNumber(total) + " ريال";
+    document.getElementById("receiptDate").textContent = "التاريخ: " + getToday();
 }
-
-
-/* ==================================================
-   التحقق من البيانات
-================================================== */
 
 function validate(){
+    if(!contractType.value){ showError("⚠️ يرجى اختيار نوع العقد"); contractType.focus(); return false; }
+    if(contractNumber.value !== "" && !/^\d{11}$/.test(contractNumber.value)){ showError("⚠️ رقم العقد اختياري، وإذا تم إدخاله يجب أن يكون 11 رقمًا"); contractNumber.focus(); return false; }
+    if(!customerName.value.trim()){ showError("⚠️ يرجى كتابة اسم العميل"); customerName.focus(); return false; }
+    
+    const d = getDuration();
+    if(d.years === 0 && d.months === 0 && d.days === 0){ showError("⚠️ يرجى اختيار مدة العقد"); durationYears.focus(); return false; }
+    if(officeValue.value === "" || Number(officeValue.value) < 0){ showError("⚠️ يرجى إدخال رسوم المكتب"); officeValue.focus(); return false; }
 
-    if(!contractType.value){
-
-        showError(
-            "⚠️ يرجى اختيار نوع العقد"
-        );
-
-        contractType.focus();
-
-        return false;
-
-    }
-
-
-    if(
-        contractNumber.value !== "" &&
-        !/^\d{11}$/.test(
-            contractNumber.value
-        )
-    ){
-
-        showError(
-            "⚠️ رقم العقد اختياري، وإذا تم إدخاله يجب أن يكون 11 رقمًا"
-        );
-
-        contractNumber.focus();
-
-        return false;
-
-    }
-
-
-    if(
-        !customerName.value.trim()
-    ){
-
-        showError(
-            "⚠️ يرجى كتابة اسم العميل"
-        );
-
-        customerName.focus();
-
-        return false;
-
-    }
-
-
-    const d =
-        getDuration();
-
-
-    if(
-        d.years === 0 &&
-        d.months === 0 &&
-        d.days === 0
-    ){
-
-        showError(
-            "⚠️ يرجى اختيار مدة العقد"
-        );
-
-        durationYears.focus();
-
-        return false;
-
-    }
-
-
-    if(
-        officeValue.value === "" ||
-        Number(officeValue.value) < 0
-    ){
-
-        showError(
-            "⚠️ يرجى إدخال رسوم المكتب"
-        );
-
-        officeValue.focus();
-
-        return false;
-
-    }
-
-
-    errorBox.style.display =
-        "none";
-
+    errorBox.style.display = "none";
     return true;
-
 }
-
-
-/* ==================================================
-   رسالة الخطأ
-================================================== */
 
 function showError(message){
-
-    errorBox.textContent =
-        message;
-
-    errorBox.style.display =
-        "block";
-
+    errorBox.textContent = message;
+    errorBox.style.display = "block";
 }
 
-
-/* ==================================================
-   تحديث تلقائي للحساب
-================================================== */
-
-contractType.addEventListener(
-    "change",
-    updateTotal
-);
-
-durationYears.addEventListener(
-    "change",
-    updateTotal
-);
-
-durationMonths.addEventListener(
-    "change",
-    updateTotal
-);
-
-durationDays.addEventListener(
-    "change",
-    updateTotal
-);
-
-officeValue.addEventListener(
-    "input",
-    updateTotal
-);
-
+[contractType, durationYears, durationMonths, durationDays].forEach(el => el.addEventListener("change", updateTotal));
+officeValue.addEventListener("input", updateTotal);
 updateTotal();
 
-
-/* ==================================================
-   إصلاح العرض والتحجيم تلقائياً ومحاذاة الفاتورة
-================================================== */
-
-function resizeReceiptPreview(){
-
-    if(
-        receiptWrap.style.display === "none"
-    ){
-
-        return;
-
-    }
-
-    const availableWidth =
-        receiptWrap.clientWidth;
-
-    const receiptWidth =
-        794;
-
-    let scale =
-        availableWidth /
-        receiptWidth;
-
-    scale =
-        Math.min(
-            scale,
-            1
-        );
-
-    receiptScaler.style.transform =
-        "scale(" +
-        scale +
-        ")";
-
-    receiptWrap.style.height =
-        (
-            1123 *
-            scale
-        ) +
-        "px";
-
-}
-
-
-window.addEventListener(
-    "resize",
-    function(){
-
-        resizeReceiptPreview();
-
-    }
-);
-
-
-window.addEventListener(
-    "orientationchange",
-    function(){
-
-        setTimeout(
-            resizeReceiptPreview,
-            250
-        );
-
-    }
-);
-
-
-/* ==================================================
-   المعاينة
-================================================== */
-
-previewBtn.addEventListener(
-    "click",
-    function(){
-
-        if(!validate()){
-
-            return;
-
-        }
-
-        updateReceipt();
-
-        receiptWrap.style.display =
-            "block";
-
-        resizeReceiptPreview();
-
-        setTimeout(
-            function(){
-
-                resizeReceiptPreview();
-
-                receiptWrap.scrollIntoView({
-
-                    behavior:"smooth",
-
-                    block:"start"
-
-                });
-
-            },
-            100
-        );
-
-    }
-);
-
-
-/* ==================================================
-   اسم الملف
-================================================== */
-
-function getFileName(){
-
-    let name =
-        customerName.value.trim();
-
-    if(!name){
-
-        name =
-            "فاتورة-إيجار";
-
-    }
-
-    name =
-        name.replace(
-            /[\\\/:\*?"<>|]/g,
-            ""
-        );
-
-    name =
-        name.replace(
-            /\s+/g,
-            " "
-        ).trim();
-
-    if(!name){
-
-        name =
-            "فاتورة-إيجار";
-
-    }
-
-    return name;
-
-}
-
-
-/* ==================================================
-   إنشاء PDF
-================================================== */
-
-async function createPDF(){
-
+previewBtn.addEventListener("click", function(){
+    if(!validate()) return;
     updateReceipt();
-
-    await new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                200
-            )
-    );
-
-    const canvas =
-        await html2canvas(
-            receipt,
-            {
-                scale:3,
-
-                useCORS:true,
-
-                allowTaint:false,
-
-                backgroundColor:"#ffffff",
-
-                logging:false,
-
-                width:794,
-
-                height:1123,
-
-                windowWidth:794,
-
-                windowHeight:1123
-            }
-        );
-
-
-    const {
-        jsPDF
-    } =
-        window.jspdf;
-
-
-    const pdf =
-        new jsPDF({
-            orientation:"portrait",
-            unit:"mm",
-            format:"a4",
-            compress:true
-        });
-
-
-    const pageWidth =
-        210;
-
-    const pageHeight =
-        297;
-
-
-    const imgWidth =
-        pageWidth;
-
-    const imgHeight =
-        canvas.height *
-        imgWidth /
-        canvas.width;
-
-
-    const finalHeight =
-        Math.min(
-            imgHeight,
-            pageHeight
-        );
-
-
-    const imageData =
-        canvas.toDataURL(
-            "image/jpeg",
-            0.97
-        );
-
-
-    pdf.addImage(
-        imageData,
-        "JPEG",
-        0,
-        0,
-        imgWidth,
-        finalHeight,
-        undefined,
-        "FAST"
-    );
-
-
-    const fileName =
-        getFileName() +
-        ".pdf";
-
-
-    return {
-
-        pdf,
-        fileName
-
-    };
-
-}
-
-
-/* ==================================================
-   حفظ PDF
-================================================== */
-
-saveBtn.addEventListener(
-    "click",
-    async function(){
-
-        if(!validate()){
-
-            return;
-
-        }
-
-        updateReceipt();
-
-        receiptWrap.style.display =
-            "block";
-
-        resizeReceiptPreview();
-
-        if(
-            typeof html2canvas ===
-            "undefined"
-        ){
-
-            showError(
-                "⚠️ لم يتم تحميل أداة إنشاء الصورة. تأكد من اتصال الإنترنت."
-            );
-
-            return;
-
-        }
-
-
-        if(
-            typeof window.jspdf ===
-            "undefined"
-        ){
-
-            showError(
-                "⚠️ لم يتم تحميل أداة PDF. تأكد من اتصال الإنترنت."
-            );
-
-            return;
-
-        }
-
-
-        const oldText =
-            saveBtn.textContent;
-
-
-        saveBtn.textContent =
-            "جاري تجهيز PDF...";
-
-        saveBtn.disabled =
-            true;
-
-
-        try{
-
-            const result =
-                await createPDF();
-
-            const pdf =
-                result.pdf;
-
-            const fileName =
-                result.fileName;
-
-            const blob =
-                pdf.output("blob");
-
-            const file =
-                new File(
-                    [blob],
-                    fileName,
-                    {
-                        type:"application/pdf"
-                    }
-                );
-
-            if(
-                navigator.share &&
-                navigator.canShare &&
-                navigator.canShare({
-                    files:[file]
-                })
-            ){
-
-                try{
-
-                    await navigator.share({
-
-                        files:[file],
-
-                        title:
-                            "فاتورة " +
-                            customerName.value.trim(),
-
-                        text:
-                            "فاتورة إيجار - شركة غسان القابضة"
-
-                    });
-
-                    saveBtn.textContent =
-                        oldText;
-
-                    saveBtn.disabled =
-                        false;
-
-                    return;
-
-                }
-                catch(error){
-
-                    if(
-                        error.name ===
-                        "AbortError"
-                    ){
-
-                        saveBtn.textContent =
-                            oldText;
-
-                        saveBtn.disabled =
-                            false;
-
-                        return;
-
-                    }
-
-                }
-
-            }
-
-            const url =
-                URL.createObjectURL(
-                    blob
-                );
-
-            const link =
-                document.createElement(
-                    "a"
-                );
-
-            link.href =
-                url;
-
-            link.download =
-                fileName;
-
-            link.style.display =
-                "none";
-
-            document.body.appendChild(
-                link
-            );
-
-            link.click();
-
-            link.remove();
-
-            setTimeout(
-                function(){
-
-                    URL.revokeObjectURL(
-                        url
-                    );
-
-                },
-                5000
-            );
-
-        }
-        catch(error){
-
-            console.error(
-                "PDF Error:",
-                error
-            );
-
-            showError(
-                "⚠️ حدث خطأ أثناء إنشاء ملف PDF. حاول مرة أخرى."
-            );
-
-        }
-
-        saveBtn.textContent =
-            oldText;
-
-        saveBtn.disabled =
-            false;
-
-    }
-);
-
-
-/* ==================================================
-   منع التكبير عند الضغط المتكرر
-================================================== */
-
-document.addEventListener(
-    "gesturestart",
-    function(event){
-
-        event.preventDefault();
-
-    }
-);
-
-
-document.addEventListener(
-    "gesturechange",
-    function(event){
-
-        event.preventDefault();
-
-    }
-);
-
-
-document.addEventListener(
-    "gestureend",
-    function(event){
-
-        event.preventDefault();
-
-    }
-);
-
-let lastTouchEnd =
-    0;
-
-document.addEventListener(
-    "touchend",
-    function(event){
-
-        const now =
-            Date.now();
-
-        if(
-            now - lastTouchEnd <= 300
-        ){
-
-            event.preventDefault();
-
-        }
-
-        lastTouchEnd =
-            now;
-
-    },
-    {
-        passive:false
-    }
-);
+    receiptWrap.style.display = "block";
+    receiptWrap.scrollIntoView({ behavior: "smooth" });
+});
+
+/* طباعة وحفظ سليم ومباشر للـ PDF دون تشويه */
+saveBtn.addEventListener("click", function(){
+    if(!validate()) return;
+    updateReceipt();
+    receiptWrap.style.display = "block";
+    window.print();
+});
 
 </script>
-
 </body>
-
 </html>
