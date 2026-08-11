@@ -77,7 +77,12 @@ font-weight:700;
 margin-bottom:4px;
 }
 
-input{
+.req{
+color:#dc2626;
+}
+
+input,
+select{
 width:100%;
 height:40px;
 border:1px solid #d5dce0;
@@ -85,11 +90,20 @@ border-radius:8px;
 padding:0 10px;
 font-size:13px;
 outline:none;
+background:#fff;
 }
 
-input:focus{
+input:focus,
+select:focus{
 border-color:#087443;
 box-shadow:0 0 0 2px #d8eee2;
+}
+
+.total-input{
+font-weight:900;
+color:#16a34a;
+background:#f8fbf9;
+text-align:center;
 }
 
 .buttons{
@@ -236,6 +250,17 @@ font-weight:700;
 text-align:center;
 }
 
+.platform-note{
+grid-column:1/-1;
+font-size:10px;
+color:#64748b;
+background:#f8fbf9;
+border:1px solid #e0ebe5;
+border-radius:7px;
+padding:7px;
+text-align:center;
+}
+
 @media(max-width:600px){
 
 .wrap{
@@ -257,6 +282,10 @@ gap:8px;
 }
 
 .field.full{
+grid-column:auto;
+}
+
+.platform-note{
 grid-column:auto;
 }
 
@@ -312,59 +341,122 @@ height:38px;
 <div class="form-grid">
 
 
+<!-- نوع العقد -->
+
+<div class="field full">
+
+<label>
+نوع العقد
+<span class="req">*</span>
+</label>
+
+<select id="contractType" required>
+
+<option value="">
+اختر نوع العقد
+</option>
+
+<option value="سكني">
+سكني
+</option>
+
+<option value="تجاري">
+تجاري
+</option>
+
+</select>
+
+</div>
+
+
+<!-- رقم العقد -->
+
+<div class="field full">
+
+<label>
+رقم العقد
+<span class="req">*</span>
+</label>
+
+<input
+id="contractNumber"
+type="text"
+inputmode="numeric"
+maxlength="11"
+placeholder="أدخل رقم العقد المكون من 11 رقم"
+required
+>
+
+</div>
+
+
+<!-- اسم العميل -->
+
 <div class="field full">
 
 <label>
 اسم العميل
+<span class="req">*</span>
 </label>
 
 <input
 id="customerName"
 type="text"
 placeholder="اكتب اسم العميل"
+required
 >
 
 </div>
 
 
+<!-- عدد السنوات -->
+
 <div class="field">
 
 <label>
 عدد سنوات العقد
+<span class="req">*</span>
 </label>
 
 <input
 id="years"
 type="number"
 min="1"
-inputmode="numeric"
-placeholder="مثال: 5"
+step="0.01"
+inputmode="decimal"
+placeholder="مثال: 1"
+required
 >
 
 </div>
 
 
+<!-- رسوم المنصة -->
+
 <div class="field">
 
 <label>
-قيمة السنوات للمنصة
+رسوم المنصة
 </label>
 
 <input
 id="platformValue"
-type="number"
-min="0"
-inputmode="decimal"
-placeholder="0"
+class="total-input"
+type="text"
+readonly
+value="0 ريال"
 >
 
 </div>
 
 
+<!-- رسوم المكتب -->
+
 <div class="field">
 
 <label>
-قيمة المكتب
+رسوم المكتب
+<span class="req">*</span>
 </label>
 
 <input
@@ -373,12 +465,15 @@ type="number"
 min="0"
 inputmode="decimal"
 placeholder="0"
+required
 >
 
 </div>
 
 
-<div class="field full">
+<!-- المجموع -->
+
+<div class="field">
 
 <label>
 المجموع
@@ -386,10 +481,18 @@ placeholder="0"
 
 <input
 id="totalValue"
+class="total-input"
 type="text"
 readonly
 value="0 ريال"
 >
+
+</div>
+
+
+<div class="platform-note">
+
+رسوم المنصة: السكني 125 ريال لكل سنة، والتجاري 200 ريال لكل سنة أو جزء من سنة.
 
 </div>
 
@@ -449,6 +552,38 @@ id="saveBtn"
 <div class="row">
 
 <span class="row-label">
+نوع العقد
+</span>
+
+<span
+class="row-value"
+id="rContractType"
+>
+-
+</span>
+
+</div>
+
+
+<div class="row">
+
+<span class="row-label">
+رقم العقد
+</span>
+
+<span
+class="row-value"
+id="rContractNumber"
+>
+-
+</span>
+
+</div>
+
+
+<div class="row">
+
+<span class="row-label">
 اسم العميل
 </span>
 
@@ -481,7 +616,7 @@ id="rYears"
 <div class="row">
 
 <span class="row-label">
-قيمة السنوات للمنصة
+رسوم المنصة
 </span>
 
 <span
@@ -497,7 +632,7 @@ id="rPlatform"
 <div class="row">
 
 <span class="row-label">
-قيمة المكتب
+رسوم المكتب
 </span>
 
 <span
@@ -546,51 +681,128 @@ id="rTotal"
 
 <script>
 
+
+const contractType =
+document.getElementById("contractType");
+
+
+const contractNumber =
+document.getElementById("contractNumber");
+
+
 const customerName =
 document.getElementById("customerName");
+
 
 const years =
 document.getElementById("years");
 
+
 const platformValue =
 document.getElementById("platformValue");
+
 
 const officeValue =
 document.getElementById("officeValue");
 
+
 const totalValue =
 document.getElementById("totalValue");
+
 
 const errorBox =
 document.getElementById("error");
 
+
 const previewBtn =
 document.getElementById("previewBtn");
 
+
 const saveBtn =
 document.getElementById("saveBtn");
+
 
 const receiptWrap =
 document.getElementById("receiptWrap");
 
 
 /* ==========================
-   حساب المجموع
+   منع أي شيء غير الأرقام
 ========================== */
 
-function updateTotal(){
+contractNumber.addEventListener(
+"input",
+function(){
 
-const platform =
-parseFloat(platformValue.value) || 0;
+this.value =
+this.value.replace(/\D/g,"").slice(0,11);
 
-const office =
-parseFloat(officeValue.value) || 0;
+}
+);
 
-const total =
-platform + office;
 
-totalValue.value =
-formatNumber(total) + " ريال";
+/* ==========================
+   حساب رسوم المنصة
+========================== */
+
+function calculatePlatform(){
+
+const type =
+contractType.value;
+
+const contractYears =
+parseFloat(years.value);
+
+
+if(
+!type ||
+!Number.isFinite(contractYears) ||
+contractYears <= 0
+){
+
+return 0;
+
+}
+
+
+/*
+السكني:
+كل سنة = 125 ريال
+
+التجاري:
+كل سنة أو جزء من سنة = 200 ريال
+
+مثال:
+1 سنة = 200
+1.1 سنة = 400
+2 سنة = 400
+2.1 سنة = 600
+*/
+
+const billableYears =
+Math.ceil(contractYears);
+
+
+let fee = 0;
+
+
+if(type === "سكني"){
+
+fee =
+billableYears * 125;
+
+}
+
+
+if(type === "تجاري"){
+
+fee =
+billableYears * 200;
+
+}
+
+
+return fee;
 
 }
 
@@ -601,7 +813,33 @@ formatNumber(total) + " ريال";
 
 function formatNumber(number){
 
-return Number(number).toLocaleString("ar-SA");
+return Number(number).toLocaleString("en-US");
+
+}
+
+
+/* ==========================
+   تحديث المجموع
+========================== */
+
+function updateTotal(){
+
+const platform =
+calculatePlatform();
+
+const office =
+parseFloat(officeValue.value) || 0;
+
+const total =
+platform + office;
+
+
+platformValue.value =
+formatNumber(platform) + " ريال";
+
+
+totalValue.value =
+formatNumber(total) + " ريال";
 
 }
 
@@ -612,14 +850,8 @@ return Number(number).toLocaleString("ar-SA");
 
 function updateReceipt(){
 
-const customer =
-customerName.value.trim();
-
-const contractYears =
-years.value.trim();
-
 const platform =
-parseFloat(platformValue.value) || 0;
+calculatePlatform();
 
 const office =
 parseFloat(officeValue.value) || 0;
@@ -628,13 +860,21 @@ const total =
 platform + office;
 
 
+document.getElementById("rContractType").textContent =
+contractType.value || "-";
+
+
+document.getElementById("rContractNumber").textContent =
+contractNumber.value || "-";
+
+
 document.getElementById("rCustomer").textContent =
-customer || "-";
+customerName.value.trim() || "-";
 
 
 document.getElementById("rYears").textContent =
-contractYears
-? contractYears + " سنوات"
+years.value
+? years.value + " سنة"
 : "-";
 
 
@@ -650,13 +890,32 @@ document.getElementById("rTotal").textContent =
 formatNumber(total) + " ريال";
 
 
+/*
+التاريخ الميلادي:
+اليوم / الشهر / السنة
+*/
+
 const now =
 new Date();
 
 
+const day =
+String(now.getDate()).padStart(2,"0");
+
+
+const month =
+String(now.getMonth()+1).padStart(2,"0");
+
+
+const year =
+now.getFullYear();
+
+
 document.getElementById("receiptDate").textContent =
 "التاريخ: " +
-now.toLocaleDateString("ar-SA");
+day + " / " +
+month + " / " +
+year;
 
 }
 
@@ -666,6 +925,36 @@ now.toLocaleDateString("ar-SA");
 ========================== */
 
 function validate(){
+
+if(!contractType.value){
+
+errorBox.textContent =
+"⚠️ يرجى اختيار نوع العقد";
+
+errorBox.style.display =
+"block";
+
+contractType.focus();
+
+return false;
+
+}
+
+
+if(!/^\d{11}$/.test(contractNumber.value)){
+
+errorBox.textContent =
+"⚠️ رقم العقد يجب أن يتكون من 11 رقم بالضبط";
+
+errorBox.style.display =
+"block";
+
+contractNumber.focus();
+
+return false;
+
+}
+
 
 if(!customerName.value.trim()){
 
@@ -682,7 +971,10 @@ return false;
 }
 
 
-if(!years.value || Number(years.value)<=0){
+if(
+!years.value ||
+Number(years.value) <= 0
+){
 
 errorBox.textContent =
 "⚠️ يرجى إدخال عدد سنوات العقد";
@@ -698,30 +990,12 @@ return false;
 
 
 if(
-platformValue.value === "" ||
-Number(platformValue.value)<0
-){
-
-errorBox.textContent =
-"⚠️ يرجى إدخال قيمة السنوات للمنصة";
-
-errorBox.style.display =
-"block";
-
-platformValue.focus();
-
-return false;
-
-}
-
-
-if(
 officeValue.value === "" ||
-Number(officeValue.value)<0
+Number(officeValue.value) < 0
 ){
 
 errorBox.textContent =
-"⚠️ يرجى إدخال قيمة المكتب";
+"⚠️ يرجى إدخال رسوم المكتب";
 
 errorBox.style.display =
 "block";
@@ -742,18 +1016,28 @@ return true;
 
 
 /* ==========================
-   تحديث المجموع تلقائيًا
+   تحديث تلقائي
 ========================== */
 
-platformValue.addEventListener(
+contractType.addEventListener(
+"change",
+updateTotal
+);
+
+
+years.addEventListener(
 "input",
 updateTotal
 );
+
 
 officeValue.addEventListener(
 "input",
 updateTotal
 );
+
+
+updateTotal();
 
 
 /* ==========================
@@ -803,30 +1087,34 @@ receiptWrap.style.display =
 "block";
 
 
-/*
-نستخدم Canvas لرسم الإيصال
-وحفظه كصورة PNG
-*/
-
 const canvas =
 document.createElement("canvas");
+
 
 const ctx =
 canvas.getContext("2d");
 
 
-const width = 900;
+const width =
+900;
 
-const height = 1050;
 
-canvas.width = width;
+const height =
+1150;
 
-canvas.height = height;
+
+canvas.width =
+width;
+
+
+canvas.height =
+height;
 
 
 /* الخلفية */
 
-ctx.fillStyle = "#eef5f1";
+ctx.fillStyle =
+"#eef5f1";
 
 ctx.fillRect(
 0,
@@ -838,16 +1126,21 @@ height
 
 /* الورقة */
 
-const x = 70;
+const x =
+70;
 
-const y = 40;
+const y =
+40;
 
-const w = 760;
+const w =
+760;
 
-const h = 970;
+const h =
+1070;
 
 
-ctx.fillStyle = "#ffffff";
+ctx.fillStyle =
+"#ffffff";
 
 ctx.fillRect(
 x,
@@ -859,9 +1152,11 @@ h
 
 /* إطار الورقة */
 
-ctx.strokeStyle = "#dce8e1";
+ctx.strokeStyle =
+"#dce8e1";
 
-ctx.lineWidth = 3;
+ctx.lineWidth =
+3;
 
 ctx.strokeRect(
 x,
@@ -873,52 +1168,75 @@ h
 
 /* العنوان */
 
-ctx.textAlign = "center";
+ctx.textAlign =
+"center";
 
-ctx.direction = "rtl";
+ctx.direction =
+"rtl";
 
-ctx.fillStyle = "#087443";
+ctx.fillStyle =
+"#087443";
 
 ctx.font =
 "bold 38px Arial";
 
 ctx.fillText(
 "مكتب غسان القابضة",
-width / 2,
+width/2,
 110
 );
 
 
-ctx.fillStyle = "#17202a";
+ctx.fillStyle =
+"#17202a";
 
 ctx.font =
 "bold 25px Arial";
 
 ctx.fillText(
 "فاتورة إيجار",
-width / 2,
+width/2,
 150
 );
 
 
 /* التاريخ */
 
-ctx.fillStyle = "#64748b";
+const now =
+new Date();
+
+const day =
+String(now.getDate()).padStart(2,"0");
+
+const month =
+String(now.getMonth()+1).padStart(2,"0");
+
+const year =
+now.getFullYear();
+
+const dateText =
+day + " / " +
+month + " / " +
+year;
+
+
+ctx.fillStyle =
+"#64748b";
 
 ctx.font =
 "18px Arial";
 
 ctx.fillText(
-"التاريخ: " +
-new Date().toLocaleDateString("ar-SA"),
-width / 2,
+"التاريخ: " + dateText,
+width/2,
 185
 );
 
 
 /* الخط */
 
-ctx.strokeStyle = "#cbd5d1";
+ctx.strokeStyle =
+"#cbd5d1";
 
 ctx.setLineDash([8,8]);
 
@@ -935,23 +1253,35 @@ ctx.setLineDash([]);
 
 /* البيانات */
 
-ctx.textAlign = "right";
+ctx.textAlign =
+"right";
 
-ctx.direction = "rtl";
+ctx.direction =
+"rtl";
 
-let startY = 280;
 
-const rightX = 760;
+let startY =
+275;
 
-const leftX = 140;
+
+const rightX =
+760;
+
+
+const leftX =
+140;
 
 
 function drawRow(label,value){
 
-ctx.fillStyle = "#64748b";
+ctx.fillStyle =
+"#64748b";
 
 ctx.font =
 "20px Arial";
+
+ctx.textAlign =
+"right";
 
 ctx.fillText(
 label,
@@ -960,12 +1290,14 @@ startY
 );
 
 
-ctx.fillStyle = "#17202a";
+ctx.fillStyle =
+"#17202a";
 
 ctx.font =
 "bold 21px Arial";
 
-ctx.textAlign = "left";
+ctx.textAlign =
+"left";
 
 ctx.fillText(
 value,
@@ -973,11 +1305,22 @@ leftX,
 startY
 );
 
-ctx.textAlign = "right";
 
-startY += 75;
+startY += 72;
 
 }
+
+
+drawRow(
+"نوع العقد",
+contractType.value
+);
+
+
+drawRow(
+"رقم العقد",
+contractNumber.value
+);
 
 
 drawRow(
@@ -988,34 +1331,38 @@ customerName.value.trim()
 
 drawRow(
 "عدد سنوات العقد",
-years.value.trim() + " سنوات"
+years.value + " سنة"
+);
+
+
+const platform =
+calculatePlatform();
+
+
+const office =
+parseFloat(officeValue.value) || 0;
+
+
+const total =
+platform + office;
+
+
+drawRow(
+"رسوم المنصة",
+formatNumber(platform) + " ريال"
 );
 
 
 drawRow(
-"قيمة السنوات للمنصة",
-formatNumber(
-parseFloat(platformValue.value) || 0
-) + " ريال"
-);
-
-
-drawRow(
-"قيمة المكتب",
-formatNumber(
-parseFloat(officeValue.value) || 0
-) + " ريال"
+"رسوم المكتب",
+formatNumber(office) + " ريال"
 );
 
 
 /* المجموع */
 
-const total =
-(parseFloat(platformValue.value)||0) +
-(parseFloat(officeValue.value)||0);
-
-
-ctx.fillStyle = "#f1f8f4";
+ctx.fillStyle =
+"#f1f8f4";
 
 ctx.fillRect(
 110,
@@ -1025,12 +1372,14 @@ startY - 35,
 );
 
 
-ctx.fillStyle = "#087443";
+ctx.fillStyle =
+"#087443";
 
 ctx.font =
 "bold 25px Arial";
 
-ctx.textAlign = "right";
+ctx.textAlign =
+"right";
 
 ctx.fillText(
 "المجموع",
@@ -1039,12 +1388,14 @@ startY + 10
 );
 
 
-ctx.fillStyle = "#16a34a";
+ctx.fillStyle =
+"#16a34a";
 
 ctx.font =
 "bold 28px Arial";
 
-ctx.textAlign = "left";
+ctx.textAlign =
+"left";
 
 ctx.fillText(
 formatNumber(total) + " ريال",
@@ -1055,17 +1406,19 @@ startY + 10
 
 /* أسفل الفاتورة */
 
-ctx.textAlign = "center";
+ctx.textAlign =
+"center";
 
-ctx.fillStyle = "#94a3b8";
+ctx.fillStyle =
+"#94a3b8";
 
 ctx.font =
 "16px Arial";
 
 ctx.fillText(
 "شكرًا لتعاملكم مع مكتب غسان القابضة",
-width / 2,
-930
+width/2,
+1040
 );
 
 
@@ -1113,7 +1466,8 @@ title:"فاتورة إيجار"
 
 return;
 
-}catch(error){
+}
+catch(error){
 
 if(
 error.name === "AbortError"
@@ -1137,7 +1491,10 @@ URL.createObjectURL(blob);
 const link =
 document.createElement("a");
 
-link.href = url;
+
+link.href =
+url;
+
 
 link.download =
 "فاتورة-إيجار.png";
