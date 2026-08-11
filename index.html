@@ -106,6 +106,21 @@ background:#f8fbf9;
 text-align:center;
 }
 
+.duration-grid{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:8px;
+}
+
+.duration-item label{
+text-align:center;
+}
+
+.duration-item select{
+text-align:center;
+font-weight:700;
+}
+
 .buttons{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -290,6 +305,10 @@ grid-column:auto;
 grid-column:auto;
 }
 
+.duration-grid{
+gap:5px;
+}
+
 .buttons{
 grid-template-columns:1fr 1fr;
 }
@@ -412,22 +431,85 @@ required
 
 <!-- مدة العقد -->
 
-<div class="field">
+<div class="field full">
 
 <label>
 مدة العقد
 <span class="req">*</span>
 </label>
 
-<input
-id="years"
-type="number"
-min="1"
-step="0.01"
-inputmode="decimal"
-placeholder="مثال: 1"
-required
->
+<div class="duration-grid">
+
+
+<div class="duration-item">
+
+<label>
+سنة
+</label>
+
+<select id="durationYears">
+
+<option value="0" selected>0</option>
+
+<script>
+for(let i=1;i<=50;i++){
+document.write(
+`<option value="${i}">${i}</option>`
+);
+}
+</script>
+
+</select>
+
+</div>
+
+
+<div class="duration-item">
+
+<label>
+شهر
+</label>
+
+<select id="durationMonths">
+
+<option value="0" selected>0</option>
+
+<script>
+for(let i=1;i<=11;i++){
+document.write(
+`<option value="${i}">${i}</option>`
+);
+}
+</script>
+
+</select>
+
+</div>
+
+
+<div class="duration-item">
+
+<label>
+يوم
+</label>
+
+<select id="durationDays">
+
+<option value="0" selected>0</option>
+
+<script>
+for(let i=1;i<=30;i++){
+document.write(
+`<option value="${i}">${i}</option>`
+);
+}
+</script>
+
+</select>
+
+</div>
+
+</div>
 
 </div>
 
@@ -474,7 +556,7 @@ required
 
 <!-- المجموع -->
 
-<div class="field">
+<div class="field full">
 
 <label>
 المجموع
@@ -494,6 +576,7 @@ value="0 ريال"
 <div class="platform-note">
 
 رسوم المنصة السكنية: 125 ريال لكل سنة أو جزء منها.
+<br>
 رسوم المنصة التجارية: أول سنة 200 ريال، وكل سنة إضافية أو جزء منها 400 ريال.
 
 </div>
@@ -607,9 +690,9 @@ id="rCustomer"
 
 <span
 class="row-value"
-id="rYears"
+id="rDuration"
 >
--
+0 سنة / 0 شهر / 0 يوم
 </span>
 
 </div>
@@ -687,42 +770,38 @@ id="rTotal"
 const contractType =
 document.getElementById("contractType");
 
-
 const contractNumber =
 document.getElementById("contractNumber");
-
 
 const customerName =
 document.getElementById("customerName");
 
+const durationYears =
+document.getElementById("durationYears");
 
-const years =
-document.getElementById("years");
+const durationMonths =
+document.getElementById("durationMonths");
 
+const durationDays =
+document.getElementById("durationDays");
 
 const platformValue =
 document.getElementById("platformValue");
 
-
 const officeValue =
 document.getElementById("officeValue");
-
 
 const totalValue =
 document.getElementById("totalValue");
 
-
 const errorBox =
 document.getElementById("error");
-
 
 const previewBtn =
 document.getElementById("previewBtn");
 
-
 const saveBtn =
 document.getElementById("saveBtn");
-
 
 const receiptWrap =
 document.getElementById("receiptWrap");
@@ -744,6 +823,79 @@ this.value.replace(/\D/g,"").slice(0,11);
 
 
 /* ==========================
+   الحصول على مدة العقد
+========================== */
+
+function getDuration(){
+
+const y =
+parseInt(durationYears.value,10) || 0;
+
+const m =
+parseInt(durationMonths.value,10) || 0;
+
+const d =
+parseInt(durationDays.value,10) || 0;
+
+return {
+years:y,
+months:m,
+days:d
+};
+
+}
+
+
+/* ==========================
+   هل توجد مدة إضافية؟
+========================== */
+
+function hasExtraDuration(){
+
+const duration =
+getDuration();
+
+return (
+duration.months > 0 ||
+duration.days > 0
+);
+
+}
+
+
+/* ==========================
+   حساب عدد السنوات المحتسبة
+========================== */
+
+function getBillableYears(){
+
+const duration =
+getDuration();
+
+let years =
+duration.years;
+
+
+/*
+إذا يوجد شهر أو يوم زائد،
+تُحسب سنة إضافية.
+*/
+
+if(
+duration.months > 0 ||
+duration.days > 0
+){
+
+years++;
+
+}
+
+return years;
+
+}
+
+
+/* ==========================
    حساب رسوم المنصة
 ========================== */
 
@@ -752,14 +904,17 @@ function calculatePlatform(){
 const type =
 contractType.value;
 
-const contractYears =
-parseFloat(years.value);
+const duration =
+getDuration();
 
 
 if(
 !type ||
-!Number.isFinite(contractYears) ||
-contractYears <= 0
+(
+duration.years === 0 &&
+duration.months === 0 &&
+duration.days === 0
+)
 ){
 
 return 0;
@@ -767,43 +922,55 @@ return 0;
 }
 
 
-/*
-السكني:
-كل سنة أو جزء من سنة = 125 ريال
+const billableYears =
+getBillableYears();
 
-التجاري:
-أول سنة = 200 ريال
-كل سنة إضافية أو جزء منها = 400 ريال
-
-أمثلة تجاري:
-1 سنة = 200
-1 سنة ويوم = 600
-2 سنة = 600
-2 سنة ويوم = 1000
-3 سنة = 1000
-3 سنة ويوم = 1400
-*/
-
-const fullYears =
-Math.floor(contractYears);
-
-const hasExtra =
-contractYears > fullYears;
 
 let fee = 0;
 
 
+/*
+السكني:
+كل سنة أو جزء منها = 125 ريال
+*/
+
 if(type === "سكني"){
 
 fee =
-Math.ceil(contractYears) * 125;
+billableYears * 125;
 
 }
 
 
+/*
+التجاري:
+أول سنة = 200 ريال
+كل سنة إضافية أو جزء منها = 400 ريال
+
+أمثلة:
+
+1 سنة
+= 200
+
+1 سنة + يوم
+= 600
+
+2 سنة
+= 600
+
+2 سنة + يوم
+= 1000
+
+3 سنوات
+= 1000
+
+3 سنوات + يوم
+= 1400
+*/
+
 if(type === "تجاري"){
 
-if(fullYears <= 1){
+if(billableYears === 1){
 
 fee = 200;
 
@@ -811,13 +978,9 @@ fee = 200;
 
 fee =
 200 +
-((fullYears - 1) * 400);
-
-}
-
-if(hasExtra){
-
-fee += 400;
+(
+(billableYears - 1) * 400
+);
 
 }
 
@@ -867,6 +1030,27 @@ formatNumber(total) + " ريال";
 
 
 /* ==========================
+   نص مدة العقد
+========================== */
+
+function getDurationText(){
+
+const duration =
+getDuration();
+
+return (
+duration.years +
+" سنة / " +
+duration.months +
+" شهر / " +
+duration.days +
+" يوم"
+);
+
+}
+
+
+/* ==========================
    التاريخ الميلادي
 ========================== */
 
@@ -884,7 +1068,13 @@ String(now.getMonth()+1).padStart(2,"0");
 const year =
 now.getFullYear();
 
-return day + " / " + month + " / " + year;
+return (
+day +
+" / " +
+month +
+" / " +
+year
+);
 
 }
 
@@ -905,38 +1095,56 @@ const total =
 platform + office;
 
 
-document.getElementById("rContractType").textContent =
+document.getElementById(
+"rContractType"
+).textContent =
 contractType.value || "-";
 
 
-document.getElementById("rContractNumber").textContent =
+document.getElementById(
+"rContractNumber"
+).textContent =
 contractNumber.value || "-";
 
 
-document.getElementById("rCustomer").textContent =
+document.getElementById(
+"rCustomer"
+).textContent =
 customerName.value.trim() || "-";
 
 
-document.getElementById("rYears").textContent =
-years.value
-? years.value + " سنة"
-: "-";
+document.getElementById(
+"rDuration"
+).textContent =
+getDurationText();
 
 
-document.getElementById("rPlatform").textContent =
-formatNumber(platform) + " ريال";
+document.getElementById(
+"rPlatform"
+).textContent =
+formatNumber(platform) +
+" ريال";
 
 
-document.getElementById("rOffice").textContent =
-formatNumber(office) + " ريال";
+document.getElementById(
+"rOffice"
+).textContent =
+formatNumber(office) +
+" ريال";
 
 
-document.getElementById("rTotal").textContent =
-formatNumber(total) + " ريال";
+document.getElementById(
+"rTotal"
+).textContent =
+formatNumber(total) +
+" ريال";
 
 
-document.getElementById("receiptDate").textContent =
-"التاريخ: " + getToday();
+document.getElementById(
+"receiptDate"
+).textContent =
+"التاريخ: " +
+getToday();
 
 }
 
@@ -962,7 +1170,9 @@ return false;
 }
 
 
-if(!/^\d{11}$/.test(contractNumber.value)){
+if(!/^\d{11}$/.test(
+contractNumber.value
+)){
 
 errorBox.textContent =
 "⚠️ رقم العقد يجب أن يتكون من 11 رقم بالضبط";
@@ -992,18 +1202,23 @@ return false;
 }
 
 
+const duration =
+getDuration();
+
+
 if(
-!years.value ||
-Number(years.value) <= 0
+duration.years === 0 &&
+duration.months === 0 &&
+duration.days === 0
 ){
 
 errorBox.textContent =
-"⚠️ يرجى إدخال مدة العقد";
+"⚠️ يرجى اختيار مدة العقد";
 
 errorBox.style.display =
 "block";
 
-years.focus();
+durationYears.focus();
 
 return false;
 
@@ -1045,12 +1260,20 @@ contractType.addEventListener(
 updateTotal
 );
 
-
-years.addEventListener(
-"input",
+durationYears.addEventListener(
+"change",
 updateTotal
 );
 
+durationMonths.addEventListener(
+"change",
+updateTotal
+);
+
+durationDays.addEventListener(
+"change",
+updateTotal
+);
 
 officeValue.addEventListener(
 "input",
@@ -1111,7 +1334,6 @@ receiptWrap.style.display =
 const canvas =
 document.createElement("canvas");
 
-
 const ctx =
 canvas.getContext("2d");
 
@@ -1119,14 +1341,12 @@ canvas.getContext("2d");
 const width =
 900;
 
-
 const height =
 1150;
 
 
 canvas.width =
 width;
-
 
 canvas.height =
 height;
@@ -1203,7 +1423,7 @@ ctx.font =
 
 ctx.fillText(
 "مكتب غسان القابضة",
-width/2,
+width / 2,
 110
 );
 
@@ -1216,7 +1436,7 @@ ctx.font =
 
 ctx.fillText(
 "فاتورة إيجار",
-width/2,
+width / 2,
 150
 );
 
@@ -1230,8 +1450,9 @@ ctx.font =
 "18px Arial";
 
 ctx.fillText(
-"التاريخ: " + getToday(),
-width/2,
+"التاريخ: " +
+getToday(),
+width / 2,
 185
 );
 
@@ -1241,13 +1462,22 @@ width/2,
 ctx.strokeStyle =
 "#cbd5d1";
 
-ctx.setLineDash([8,8]);
+ctx.setLineDash([
+8,
+8
+]);
 
 ctx.beginPath();
 
-ctx.moveTo(110,220);
+ctx.moveTo(
+110,
+220
+);
 
-ctx.lineTo(790,220);
+ctx.lineTo(
+790,
+220
+);
 
 ctx.stroke();
 
@@ -1266,7 +1496,10 @@ const leftX =
 140;
 
 
-function drawRow(label,value){
+function drawRow(
+label,
+value
+){
 
 ctx.fillStyle =
 "#64748b";
@@ -1299,7 +1532,6 @@ leftX,
 startY
 );
 
-
 startY += 72;
 
 }
@@ -1325,17 +1557,17 @@ customerName.value.trim()
 
 drawRow(
 "مدة العقد",
-years.value + " سنة"
+getDurationText()
 );
 
 
 const platform =
 calculatePlatform();
 
-
 const office =
-parseFloat(officeValue.value) || 0;
-
+parseFloat(
+officeValue.value
+) || 0;
 
 const total =
 platform + office;
@@ -1343,13 +1575,15 @@ platform + office;
 
 drawRow(
 "رسوم المنصة",
-formatNumber(platform) + " ريال"
+formatNumber(platform) +
+" ريال"
 );
 
 
 drawRow(
 "رسوم المكتب",
-formatNumber(office) + " ريال"
+formatNumber(office) +
+" ريال"
 );
 
 
@@ -1392,7 +1626,8 @@ ctx.textAlign =
 "left";
 
 ctx.fillText(
-formatNumber(total) + " ريال",
+formatNumber(total) +
+" ريال",
 leftX + 20,
 startY + 10
 );
@@ -1411,7 +1646,7 @@ ctx.font =
 
 ctx.fillText(
 "شكرًا لتعاملكم مع مكتب غسان القابضة",
-width/2,
+width / 2,
 1040
 );
 
@@ -1464,7 +1699,8 @@ return;
 catch(error){
 
 if(
-error.name === "AbortError"
+error.name ===
+"AbortError"
 ){
 
 return;
@@ -1494,7 +1730,9 @@ link.download =
 "فاتورة-إيجار.png";
 
 
-document.body.appendChild(link);
+document.body.appendChild(
+link
+);
 
 link.click();
 
@@ -1504,7 +1742,9 @@ link.remove();
 setTimeout(
 function(){
 
-URL.revokeObjectURL(url);
+URL.revokeObjectURL(
+url
+);
 
 },
 1000
