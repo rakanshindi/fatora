@@ -1,0 +1,1172 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>فاتورة إيجار | مكتب غسان القابضة</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+html,body{
+margin:0;
+padding:0;
+background:#eef5f1;
+color:#17202a;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;
+}
+
+body{
+min-height:100vh;
+}
+
+.wrap{
+max-width:700px;
+margin:auto;
+padding:15px;
+}
+
+.card{
+background:#fff;
+border-radius:16px;
+padding:18px;
+box-shadow:0 5px 25px rgba(0,0,0,.08);
+}
+
+.header{
+text-align:center;
+margin-bottom:15px;
+}
+
+.title{
+margin:0;
+font-size:22px;
+font-weight:800;
+color:#087443;
+}
+
+.subtitle{
+margin:4px 0 0;
+font-size:12px;
+color:#64748b;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.field{
+min-width:0;
+}
+
+.field.full{
+grid-column:1/-1;
+}
+
+label{
+display:block;
+font-size:12px;
+font-weight:700;
+margin-bottom:4px;
+}
+
+input{
+width:100%;
+height:40px;
+border:1px solid #d5dce0;
+border-radius:8px;
+padding:0 10px;
+font-size:13px;
+outline:none;
+}
+
+input:focus{
+border-color:#087443;
+box-shadow:0 0 0 2px #d8eee2;
+}
+
+.buttons{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+margin-top:15px;
+}
+
+button{
+height:42px;
+border:0;
+border-radius:9px;
+font-size:13px;
+font-weight:800;
+cursor:pointer;
+color:#fff;
+}
+
+.preview-btn{
+background:#475569;
+}
+
+.save-btn{
+background:#087443;
+}
+
+button:active{
+transform:scale(.98);
+}
+
+.receipt-wrap{
+margin-top:20px;
+display:none;
+}
+
+.receipt{
+width:100%;
+max-width:430px;
+margin:auto;
+background:#fff;
+border:1px solid #dce8e1;
+box-shadow:0 4px 20px rgba(0,0,0,.08);
+padding:22px 18px;
+position:relative;
+}
+
+.receipt-top{
+text-align:center;
+padding-bottom:14px;
+border-bottom:1px dashed #cbd5d1;
+}
+
+.receipt-office{
+font-size:20px;
+font-weight:900;
+color:#087443;
+}
+
+.receipt-title{
+font-size:14px;
+font-weight:800;
+margin-top:5px;
+}
+
+.receipt-date{
+font-size:10px;
+color:#64748b;
+margin-top:4px;
+}
+
+.receipt-body{
+padding:15px 0;
+}
+
+.row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+padding:9px 0;
+border-bottom:1px solid #edf1ef;
+font-size:12px;
+}
+
+.row:last-child{
+border-bottom:0;
+}
+
+.row-label{
+color:#64748b;
+}
+
+.row-value{
+font-weight:800;
+color:#17202a;
+text-align:left;
+word-break:break-word;
+}
+
+.total{
+margin-top:8px;
+padding:12px;
+background:#f1f8f4;
+border:1px solid #d5e8de;
+border-radius:9px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.total-label{
+font-size:13px;
+font-weight:800;
+color:#087443;
+}
+
+.total-value{
+font-size:17px;
+font-weight:900;
+color:#16a34a;
+}
+
+.receipt-bottom{
+margin-top:15px;
+padding-top:12px;
+border-top:1px dashed #cbd5d1;
+text-align:center;
+font-size:9px;
+color:#94a3b8;
+line-height:1.6;
+}
+
+.error{
+display:none;
+margin-top:10px;
+padding:9px;
+background:#fff1f2;
+border:1px solid #fecdd3;
+border-radius:8px;
+color:#9f1239;
+font-size:11px;
+font-weight:700;
+text-align:center;
+}
+
+@media(max-width:600px){
+
+.wrap{
+padding:8px;
+}
+
+.card{
+padding:12px;
+border-radius:12px;
+}
+
+.title{
+font-size:18px;
+}
+
+.form-grid{
+grid-template-columns:1fr;
+gap:8px;
+}
+
+.field.full{
+grid-column:auto;
+}
+
+.buttons{
+grid-template-columns:1fr 1fr;
+}
+
+.receipt{
+padding:18px 14px;
+}
+
+.receipt-office{
+font-size:18px;
+}
+
+}
+
+@media(max-width:380px){
+
+.buttons{
+grid-template-columns:1fr;
+}
+
+button{
+height:38px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrap">
+
+<div class="card">
+
+<div class="header">
+
+<h1 class="title">
+مكتب غسان القابضة
+</h1>
+
+<div class="subtitle">
+فاتورة إيجار
+</div>
+
+</div>
+
+
+<div class="form-grid">
+
+
+<div class="field full">
+
+<label>
+اسم العميل
+</label>
+
+<input
+id="customerName"
+type="text"
+placeholder="اكتب اسم العميل"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+عدد سنوات العقد
+</label>
+
+<input
+id="years"
+type="number"
+min="1"
+inputmode="numeric"
+placeholder="مثال: 5"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+قيمة السنوات للمنصة
+</label>
+
+<input
+id="platformValue"
+type="number"
+min="0"
+inputmode="decimal"
+placeholder="0"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+قيمة المكتب
+</label>
+
+<input
+id="officeValue"
+type="number"
+min="0"
+inputmode="decimal"
+placeholder="0"
+>
+
+</div>
+
+
+<div class="field full">
+
+<label>
+المجموع
+</label>
+
+<input
+id="totalValue"
+type="text"
+readonly
+value="0 ريال"
+>
+
+</div>
+
+
+</div>
+
+
+<div id="error" class="error">
+⚠️ يرجى إكمال البيانات المطلوبة
+</div>
+
+
+<div class="buttons">
+
+<button
+type="button"
+class="preview-btn"
+id="previewBtn"
+>
+معاينة الفاتورة
+</button>
+
+<button
+type="button"
+class="save-btn"
+id="saveBtn"
+>
+حفظ الفاتورة كصورة
+</button>
+
+</div>
+
+
+<div class="receipt-wrap" id="receiptWrap">
+
+<div class="receipt" id="receipt">
+
+<div class="receipt-top">
+
+<div class="receipt-office">
+مكتب غسان القابضة
+</div>
+
+<div class="receipt-title">
+فاتورة إيجار
+</div>
+
+<div class="receipt-date" id="receiptDate">
+</div>
+
+</div>
+
+
+<div class="receipt-body">
+
+
+<div class="row">
+
+<span class="row-label">
+اسم العميل
+</span>
+
+<span
+class="row-value"
+id="rCustomer"
+>
+-
+</span>
+
+</div>
+
+
+<div class="row">
+
+<span class="row-label">
+عدد سنوات العقد
+</span>
+
+<span
+class="row-value"
+id="rYears"
+>
+-
+</span>
+
+</div>
+
+
+<div class="row">
+
+<span class="row-label">
+قيمة السنوات للمنصة
+</span>
+
+<span
+class="row-value"
+id="rPlatform"
+>
+0 ريال
+</span>
+
+</div>
+
+
+<div class="row">
+
+<span class="row-label">
+قيمة المكتب
+</span>
+
+<span
+class="row-value"
+id="rOffice"
+>
+0 ريال
+</span>
+
+</div>
+
+
+<div class="total">
+
+<span class="total-label">
+المجموع
+</span>
+
+<span
+class="total-value"
+id="rTotal"
+>
+0 ريال
+</span>
+
+</div>
+
+
+</div>
+
+
+<div class="receipt-bottom">
+
+شكرًا لتعاملكم مع مكتب غسان القابضة
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const customerName =
+document.getElementById("customerName");
+
+const years =
+document.getElementById("years");
+
+const platformValue =
+document.getElementById("platformValue");
+
+const officeValue =
+document.getElementById("officeValue");
+
+const totalValue =
+document.getElementById("totalValue");
+
+const errorBox =
+document.getElementById("error");
+
+const previewBtn =
+document.getElementById("previewBtn");
+
+const saveBtn =
+document.getElementById("saveBtn");
+
+const receiptWrap =
+document.getElementById("receiptWrap");
+
+
+/* ==========================
+   حساب المجموع
+========================== */
+
+function updateTotal(){
+
+const platform =
+parseFloat(platformValue.value) || 0;
+
+const office =
+parseFloat(officeValue.value) || 0;
+
+const total =
+platform + office;
+
+totalValue.value =
+formatNumber(total) + " ريال";
+
+}
+
+
+/* ==========================
+   تنسيق الأرقام
+========================== */
+
+function formatNumber(number){
+
+return Number(number).toLocaleString("ar-SA");
+
+}
+
+
+/* ==========================
+   تحديث الفاتورة
+========================== */
+
+function updateReceipt(){
+
+const customer =
+customerName.value.trim();
+
+const contractYears =
+years.value.trim();
+
+const platform =
+parseFloat(platformValue.value) || 0;
+
+const office =
+parseFloat(officeValue.value) || 0;
+
+const total =
+platform + office;
+
+
+document.getElementById("rCustomer").textContent =
+customer || "-";
+
+
+document.getElementById("rYears").textContent =
+contractYears
+? contractYears + " سنوات"
+: "-";
+
+
+document.getElementById("rPlatform").textContent =
+formatNumber(platform) + " ريال";
+
+
+document.getElementById("rOffice").textContent =
+formatNumber(office) + " ريال";
+
+
+document.getElementById("rTotal").textContent =
+formatNumber(total) + " ريال";
+
+
+const now =
+new Date();
+
+
+document.getElementById("receiptDate").textContent =
+"التاريخ: " +
+now.toLocaleDateString("ar-SA");
+
+}
+
+
+/* ==========================
+   التحقق
+========================== */
+
+function validate(){
+
+if(!customerName.value.trim()){
+
+errorBox.textContent =
+"⚠️ يرجى كتابة اسم العميل";
+
+errorBox.style.display =
+"block";
+
+customerName.focus();
+
+return false;
+
+}
+
+
+if(!years.value || Number(years.value)<=0){
+
+errorBox.textContent =
+"⚠️ يرجى إدخال عدد سنوات العقد";
+
+errorBox.style.display =
+"block";
+
+years.focus();
+
+return false;
+
+}
+
+
+if(
+platformValue.value === "" ||
+Number(platformValue.value)<0
+){
+
+errorBox.textContent =
+"⚠️ يرجى إدخال قيمة السنوات للمنصة";
+
+errorBox.style.display =
+"block";
+
+platformValue.focus();
+
+return false;
+
+}
+
+
+if(
+officeValue.value === "" ||
+Number(officeValue.value)<0
+){
+
+errorBox.textContent =
+"⚠️ يرجى إدخال قيمة المكتب";
+
+errorBox.style.display =
+"block";
+
+officeValue.focus();
+
+return false;
+
+}
+
+
+errorBox.style.display =
+"none";
+
+return true;
+
+}
+
+
+/* ==========================
+   تحديث المجموع تلقائيًا
+========================== */
+
+platformValue.addEventListener(
+"input",
+updateTotal
+);
+
+officeValue.addEventListener(
+"input",
+updateTotal
+);
+
+
+/* ==========================
+   المعاينة
+========================== */
+
+previewBtn.addEventListener(
+"click",
+function(){
+
+if(!validate()){
+
+return;
+
+}
+
+updateReceipt();
+
+receiptWrap.style.display =
+"block";
+
+receiptWrap.scrollIntoView({
+behavior:"smooth",
+block:"center"
+});
+
+});
+
+
+/* ==========================
+   حفظ كصورة
+========================== */
+
+saveBtn.addEventListener(
+"click",
+async function(){
+
+if(!validate()){
+
+return;
+
+}
+
+updateReceipt();
+
+receiptWrap.style.display =
+"block";
+
+
+/*
+نستخدم Canvas لرسم الإيصال
+وحفظه كصورة PNG
+*/
+
+const canvas =
+document.createElement("canvas");
+
+const ctx =
+canvas.getContext("2d");
+
+
+const width = 900;
+
+const height = 1050;
+
+canvas.width = width;
+
+canvas.height = height;
+
+
+/* الخلفية */
+
+ctx.fillStyle = "#eef5f1";
+
+ctx.fillRect(
+0,
+0,
+width,
+height
+);
+
+
+/* الورقة */
+
+const x = 70;
+
+const y = 40;
+
+const w = 760;
+
+const h = 970;
+
+
+ctx.fillStyle = "#ffffff";
+
+ctx.fillRect(
+x,
+y,
+w,
+h
+);
+
+
+/* إطار الورقة */
+
+ctx.strokeStyle = "#dce8e1";
+
+ctx.lineWidth = 3;
+
+ctx.strokeRect(
+x,
+y,
+w,
+h
+);
+
+
+/* العنوان */
+
+ctx.textAlign = "center";
+
+ctx.direction = "rtl";
+
+ctx.fillStyle = "#087443";
+
+ctx.font =
+"bold 38px Arial";
+
+ctx.fillText(
+"مكتب غسان القابضة",
+width / 2,
+110
+);
+
+
+ctx.fillStyle = "#17202a";
+
+ctx.font =
+"bold 25px Arial";
+
+ctx.fillText(
+"فاتورة إيجار",
+width / 2,
+150
+);
+
+
+/* التاريخ */
+
+ctx.fillStyle = "#64748b";
+
+ctx.font =
+"18px Arial";
+
+ctx.fillText(
+"التاريخ: " +
+new Date().toLocaleDateString("ar-SA"),
+width / 2,
+185
+);
+
+
+/* الخط */
+
+ctx.strokeStyle = "#cbd5d1";
+
+ctx.setLineDash([8,8]);
+
+ctx.beginPath();
+
+ctx.moveTo(110,220);
+
+ctx.lineTo(790,220);
+
+ctx.stroke();
+
+ctx.setLineDash([]);
+
+
+/* البيانات */
+
+ctx.textAlign = "right";
+
+ctx.direction = "rtl";
+
+let startY = 280;
+
+const rightX = 760;
+
+const leftX = 140;
+
+
+function drawRow(label,value){
+
+ctx.fillStyle = "#64748b";
+
+ctx.font =
+"20px Arial";
+
+ctx.fillText(
+label,
+rightX,
+startY
+);
+
+
+ctx.fillStyle = "#17202a";
+
+ctx.font =
+"bold 21px Arial";
+
+ctx.textAlign = "left";
+
+ctx.fillText(
+value,
+leftX,
+startY
+);
+
+ctx.textAlign = "right";
+
+startY += 75;
+
+}
+
+
+drawRow(
+"اسم العميل",
+customerName.value.trim()
+);
+
+
+drawRow(
+"عدد سنوات العقد",
+years.value.trim() + " سنوات"
+);
+
+
+drawRow(
+"قيمة السنوات للمنصة",
+formatNumber(
+parseFloat(platformValue.value) || 0
+) + " ريال"
+);
+
+
+drawRow(
+"قيمة المكتب",
+formatNumber(
+parseFloat(officeValue.value) || 0
+) + " ريال"
+);
+
+
+/* المجموع */
+
+const total =
+(parseFloat(platformValue.value)||0) +
+(parseFloat(officeValue.value)||0);
+
+
+ctx.fillStyle = "#f1f8f4";
+
+ctx.fillRect(
+110,
+startY - 35,
+680,
+80
+);
+
+
+ctx.fillStyle = "#087443";
+
+ctx.font =
+"bold 25px Arial";
+
+ctx.textAlign = "right";
+
+ctx.fillText(
+"المجموع",
+rightX - 20,
+startY + 10
+);
+
+
+ctx.fillStyle = "#16a34a";
+
+ctx.font =
+"bold 28px Arial";
+
+ctx.textAlign = "left";
+
+ctx.fillText(
+formatNumber(total) + " ريال",
+leftX + 20,
+startY + 10
+);
+
+
+/* أسفل الفاتورة */
+
+ctx.textAlign = "center";
+
+ctx.fillStyle = "#94a3b8";
+
+ctx.font =
+"16px Arial";
+
+ctx.fillText(
+"شكرًا لتعاملكم مع مكتب غسان القابضة",
+width / 2,
+930
+);
+
+
+/* إنشاء الصورة */
+
+canvas.toBlob(
+async function(blob){
+
+if(!blob){
+
+return;
+
+}
+
+
+const file =
+new File(
+[blob],
+"فاتورة-إيجار.png",
+{
+type:"image/png"
+}
+);
+
+
+/* مشاركة الجوال */
+
+if(
+navigator.share &&
+navigator.canShare &&
+navigator.canShare({
+files:[file]
+})
+){
+
+try{
+
+await navigator.share({
+
+files:[file],
+
+title:"فاتورة إيجار"
+
+});
+
+return;
+
+}catch(error){
+
+if(
+error.name === "AbortError"
+){
+
+return;
+
+}
+
+}
+
+}
+
+
+/* الحفظ على الكمبيوتر */
+
+const url =
+URL.createObjectURL(blob);
+
+
+const link =
+document.createElement("a");
+
+link.href = url;
+
+link.download =
+"فاتورة-إيجار.png";
+
+
+document.body.appendChild(link);
+
+link.click();
+
+link.remove();
+
+
+setTimeout(
+function(){
+
+URL.revokeObjectURL(url);
+
+},
+1000
+);
+
+},
+"image/png"
+);
+
+});
+
+</script>
+
+</body>
+
+</html>
